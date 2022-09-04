@@ -22,9 +22,13 @@ sys.extensions_location = os.environ.get('CALIBRE_EXTENSIONS_PATH', '/usr/lib/ca
 sys.executables_location = os.environ.get('CALIBRE_EXECUTABLES_PATH', '/usr/bin')
 
 
+import calibre
 from calibre.ebooks.conversion.cli import main as calibre_ebook_convert
 
 # Wrapper functions
+
+def convert_version():
+    return 'calibre_' + calibre.__version__
 
 def convert(original_filename, new_filename):
     # This is not a fast operation, examples;
