@@ -70,7 +70,22 @@ Then open a browser to http://localhost:8080/... or issue:
       * http://127.0.0.1:8080/epub/test_book_fb2.fb2 which will convert a FictionBook to epub format (same book as above)
       * http://127.0.0.1:8080/file/test_book_fb2.fb2 and http://127.0.0.1:8080/fb2/test_book_fb2.fb2 which will download without conversion
 
-## https / TLS / SSL support
+## Notes and config
+
+### json config file
+
+  * config for web server config
+  * ebook_dir - directory to serve, if omitted defaults to current directory
+  * temp_dir - temporary location on disk to store generated files. Will use OS environment variable TEMP if
+ omitted, if that's missing system temp location. NOTE recommend using a temporary file system, on devices like RaspberryPi and SBCs with SD Cards, recommend using directory that is NOT located on SD Card to preserve card
+
+### Operating System Environment Variables
+
+  * CALIBRE_EBOOK_CONVERT_EXE - full path to ebook-convert exe (if  not using Calibre as a library). For Windows do NOT set with double quotes, even for paths with spaces
+  * TEMP - override for temp disk location, see `temp_dir` in json config
+  * SENTRY_DSN - optional Sentry token
+
+### https / TLS / SSL support
 
 https support is optional. There is no authentication/authorization support, recommendation is to use a reverse proxy *but* Flask does make it easy and quick to expose over https.
 
