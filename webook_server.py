@@ -76,7 +76,9 @@ def after_request(response):
 
 @app.route("/")
 def hello():
-    return '<a href="mobi/">mobi/</a>'
+    return '''<a href="mobi/">mobi/</a><br>
+<a href="file/">file/</a>
+'''
     # TODO loop through ebook_only_mimetypes and list links
 
 @app.route("/<path:url_path>")
@@ -103,21 +105,30 @@ def any_path(url_path):
         directory_path = config['ebook_dir']
     log.info('directory_path %s', directory_path)
     if os.path.isfile(directory_path):
-        # do conversion
-        # TODO if ebook_format is 'file'/'raw'/etc. always serve raw file and/or offer dialog for viewing/changing meta data in the generated download
-        # TODO if file already in expected formatting serve raw file
-        # TODO consider file caching (see note below about deleting/cleanup of temp files)
-        log.info('convert ebook from %s into %s', directory_path, ebook_format)
-        # TODO if same format, do not convert
-        # TODO use meta data in file to generate filename
-        #result_ebook_filename = 'fixme_generate_filename.' + ebook_format
+        # determine existing format (using ONLY filename extension, potentiall could use content)
+        existing_ebook_format = os.path.splitext(directory_path)[0].lower()
+        do_conversion = True
+        if existing_ebook_format == ebook_format or ebook_format in ('file'):
+            do_conversion = False
+            ebook_format = existing_ebook_format
+            tmp_ebook_filename = directory_path
         result_ebook_filename =  os.path.basename(directory_path)
-        result_ebook_filename = os.path.splitext(result_ebook_filename)[0] + '.' + ebook_format
-        tmp_ebook_filename = 'fixme_generate_filename.' + ebook_format
-        tmp_ebook_filename = os.path.join(config['temp_dir'], tmp_ebook_filename)
-        ebook_conversion.convert(directory_path, tmp_ebook_filename)
-        # now serve content of tmp_ebook_filename, then delete tmp_ebook_filename
-        mimetype_str = ebook_only_mimetypes[ebook_format]
+
+        if do_conversion:
+            # do conversion
+            # TODO if ebook_format is 'file'/'raw'/etc. always serve raw file and/or offer dialog for viewing/changing meta data in the generated download
+            # TODO consider file caching (see note below about deleting/cleanup of temp files)
+            log.info('convert ebook from %s into %s', directory_path, ebook_format)
+            # TODO if same format, do not convert
+            # TODO use meta data in file to generate filename
+            #result_ebook_filename = 'fixme_generate_filename.' + ebook_format
+            result_ebook_filename = os.path.splitext(result_ebook_filename)[0] + '.' + ebook_format
+            tmp_ebook_filename = 'fixme_generate_filename.' + ebook_format
+            tmp_ebook_filename = os.path.join(config['temp_dir'], tmp_ebook_filename)
+            ebook_conversion.convert(directory_path, tmp_ebook_filename)
+            # now serve content of tmp_ebook_filename, then delete tmp_ebook_filename
+
+        mimetype_str = ebook_only_mimetypes.get(ebook_format, 'application/octet-stream')
         """
         f = open(tmp_ebook_filename, 'rb')
         data = f.read()  # read the entire thing... can I feed file object as the response?
