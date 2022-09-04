@@ -21,7 +21,13 @@ Either use Operating System packages or Python packages
 
 ### Debian/Ubuntu install dependencies
 
-	sudo apt install calibre python-flask
+For Python 2.x deployment:
+
+    sudo apt install calibre python-flask
+
+For Python 3.x deployment (with calibre ebook-convert exe - likely Python2):
+
+    sudo apt install calibre python3-flask
 
 
 ### Python install dependencies
@@ -89,7 +95,16 @@ Known to work under Linux with
 With:
 
   * Python 2.7.13 (default, Aug 22 2020, 10:03:02)
-  * Flask 0.12.1
-  * ebook_conversion calibre_2.75.1
+      * Flask 0.12.1
+      * ebook_conversion calibre_2.75.1
+  * Python 3.5.3 (default, Sep 27 2018, 17:25:39)
+      * Flask 0.12.1
+      * calibre ebook-convert exe version 2.75.1
 
 Using the OS packages for Python, Flask, and Calibre.
+
+### Microsoft Windows
+
+  * Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
+      * Flask 1.1.2
+      * calibre ebook-convert exe version 4.2.0
