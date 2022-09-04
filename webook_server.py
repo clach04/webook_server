@@ -187,7 +187,7 @@ if __name__ == "__main__":
         #'ssl_context': 'adhoc'
         #'ssl_context': (cert_path, key_path)
     }
-    default_config.update(config['config'])
+    default_config.update(config.get('config', {}))
     config['config'] = default_config
 
     settings = config['config']
