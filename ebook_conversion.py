@@ -45,7 +45,8 @@ if calibre:
         # This is not a fast operation, examples;
         #                   700Kb azw3 can take almost 30 secs to convertion into mobi
         # (same)    700Kb azw3 can take almost 10 secs to convertion into epub
-        # TODO capture stdout/stderr?
+        # TODO capture stdout/stderr? At the moment stdout/stderr is allowed to be emitted
+        log.info('in-process conversion, see stdout/stderr for status')
         result = calibre_ebook_convert(['dummy', original_filename, new_filename])
         return result  # or the new_filename?
 else:
@@ -70,6 +71,7 @@ else:
         return 'calibre-ebook-convert_' + calibre__version__
 
     def convert(original_filename, new_filename):
+        log.info('external-process conversion, this may take some time with no status updates')
         process = subprocess.Popen([ebook_convert_exe, original_filename, new_filename], stdout=subprocess.PIPE)  # call ebook-convert as a subprocess
         process.wait()  # wait until it finishes it work
         ebook_convert_exe_convert_stdout, ebook_convert_exe_convert_stderr = process.communicate()  # get output
