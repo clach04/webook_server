@@ -32,7 +32,7 @@ If installing/working with a source checkout issue:
 
     pip install -r requirements.txt
 
-Run:
+### Run
 
     cp example_config.json config.json
     # Optional; edit config.json with "ebook_dir" (defaults to ./ if omitted) and "temp_dir" (will use OS environment variable TEMP if omitted, if that's missing system temp location) location
@@ -41,6 +41,8 @@ Run:
 Then open a browser to http://localhost:8080/... or issue:
 
     curl http://localhost:8080/....
+
+TODO sample session using https://github.com/clach04/sample_reading_media/releases/tag/v0.1
 
 ## https / TLS / SSL support
 
