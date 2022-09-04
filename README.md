@@ -33,7 +33,7 @@ If installing/working with a source checkout issue:
 Run:
 
     cp example_config.json config.json
-    # Optional; edit config.json with "ebook_dir" and "temp_dir" location
+    # Optional; edit config.json with "ebook_dir" (defaults to ./ if omitted) and "temp_dir" (will use OS environment variable TEMP if omitted, if that's missing system temp location) location
     python webook_server.py
 
 Then open a browser to http://localhost:8080/... or issue:
