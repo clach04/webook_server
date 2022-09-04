@@ -76,3 +76,16 @@ Example #2 requires files to exist in current directory, generated via something
 
 Which will generate a certificate valid for 1 year.
 
+## Known working environments
+
+Known to work under Linux with
+
+### Debian GNU/Linux 9 (stretch)
+
+With:
+
+  * Python 2.7.13 (default, Aug 22 2020, 10:03:02)
+  * Flask 0.12.1
+  * ebook_conversion calibre_2.75.1
+
+Using the OS packages for Python, Flask, and Calibre.
