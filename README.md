@@ -64,7 +64,10 @@ Then open a browser to http://localhost:8080/... or issue:
 
         python webook_server.py sample_reading_media.json
 
-5. Open Web browser to http://127.0.0.1:8080/ and browse around, for example download http://127.0.0.1:8080/mobi/test_book_fb2.fb2 which will convert a FictionBook to Mobi format
+5. Open Web browser to http://127.0.0.1:8080/ and browse around, for example download
+
+      * http://127.0.0.1:8080/mobi/test_book_fb2.fb2 which will convert a FictionBook to Mobi format
+      * http://127.0.0.1:8080/epub/test_book_fb2.fb2 which will convert a FictionBook to epub format (same book as above)
 
 ## https / TLS / SSL support
 
