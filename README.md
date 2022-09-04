@@ -14,7 +14,7 @@ Either use Operating System packages or Python packages
 
 ### Python install dependencies
 
-NOTE Currently relies on Calibre ebook-convert (not documented in the Python dependency install notes below).
+NOTE Currently relies on [Calibre](https://github.com/kovidgoyal/calibre) ebook-convert (not documented in the Python dependency install notes below).
 
 If installing/working with a source checkout issue:
 
