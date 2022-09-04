@@ -68,6 +68,7 @@ Then open a browser to http://localhost:8080/... or issue:
 
       * http://127.0.0.1:8080/mobi/test_book_fb2.fb2 which will convert a FictionBook to Mobi format
       * http://127.0.0.1:8080/epub/test_book_fb2.fb2 which will convert a FictionBook to epub format (same book as above)
+      * http://127.0.0.1:8080/file/test_book_fb2.fb2 and http://127.0.0.1:8080/fb2/test_book_fb2.fb2 which will download without conversion
 
 ## https / TLS / SSL support
 
