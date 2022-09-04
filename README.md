@@ -15,6 +15,8 @@ As of now this is **not** an OPDS server, if you are looking for one, take a loo
       * https://github.com/clach04/dir2opds/wiki/Tested-Clients
 
 
+TODO add a TOC
+
 ## Getting Started
 
 Either use Operating System packages or Python packages
@@ -48,7 +50,22 @@ Then open a browser to http://localhost:8080/... or issue:
 
     curl http://localhost:8080/....
 
-TODO sample session using https://github.com/clach04/sample_reading_media/releases/tag/v0.1
+### Sample Run
+
+  1. Download the sample_reading_media.zip from https://github.com/clach04/sample_reading_media/releases/tag/v0.1
+  2. Extract to local directory, ideally into a directory called `sample_reading_media`
+  3. Create a (or edit existing) config file, for example named `sample_reading_media.json`
+
+        {
+            "ebook_dir": "sample_reading_media"
+        }
+
+  4. Run the server with the config file:
+
+        python webook_server.py sample_reading_media.json
+
+  5. Open Web browser to http://127.0.0.1:8080/ and browse around, for example download http://127.0.0.1:8080/mobi/test_book_fb2.fb2 which will convert a FictionBook to Mobi format
+
 
 ## https / TLS / SSL support
 
