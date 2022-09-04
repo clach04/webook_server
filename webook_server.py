@@ -48,6 +48,7 @@ log.setLevel(level=logging.DEBUG)  # Debug hack!
 
 log.info('Python %s on %s', sys.version, sys.platform)
 log.info('Flask %s', flask.__version__)
+log.info('ebook_conversion %s', ebook_conversion.convert_version())
 
 TEMP_DIR = os.environ.get('TEMP', tempfile.gettempdir())
 
