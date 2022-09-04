@@ -103,6 +103,8 @@ def any_path(url_path):
     log.info('directory_path %s', directory_path)
     if os.path.isfile(directory_path):
         # do conversion
+        # TODO if file already in expected formatting serve raw file
+        # TODO consider file caching (see note below about deleting/cleanup of temp files)
         log.info('convert ebook from %s into %s', directory_path, ebook_format)
         # TODO if same format, do not convert
         # TODO use meta data in file to generate filename
@@ -129,9 +131,10 @@ def any_path(url_path):
         return flask.send_file(tmp_ebook_filename, mimetype=mimetype_str, attachment_filename=result_ebook_filename, as_attachment=True)  # example; '0.12.2' pre flask 2.0
     elif os.path.isdir(directory_path):
         # do browse
-        # FIXME TODO i missing traling '/' end up with parent directory...
+        # FIXME TODO if missing trailing '/' end up with parent directory...
         log.info('browse %s', directory_path)
         # format vaugely like Apache and Nginx file browse / auto-index mode
+        # TODO use a template
         HTML_HEADER = """<html><head><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
         HTML_FOOTER = "</pre><hr></body></html>"
         path_title = url_path
@@ -143,7 +146,7 @@ def any_path(url_path):
             size = str(os.path.getsize(file_path))
             date = os.path.getmtime(file_path)
             date = time.gmtime(date)
-            date = time.strftime('%d-%b-%Y %H:%M',date)
+            date = time.strftime('%d-%b-%Y %H:%M',date)  # match Apache/Nginix date format (todo option for ISO)
             spaces1 = ' '*(50-len(filename))
             spaces2 = ' '*(20-len(size))
             # FIXME cgi escape needed!
