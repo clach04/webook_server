@@ -11,6 +11,8 @@ As of now this is **not** an OPDS server, if you are looking for one, take a loo
   * https://github.com/seblucas/cops - requires calibre2opds
   * https://github.com/calibre2opds/calibre2opds
   * https://github.com/dubyte/dir2opds
+      * https://github.com/clach04/dir2opds/wiki
+      * https://github.com/clach04/dir2opds/wiki/Tested-Clients
 
 
 ## Getting Started
