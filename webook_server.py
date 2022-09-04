@@ -103,6 +103,7 @@ def any_path(url_path):
     log.info('directory_path %s', directory_path)
     if os.path.isfile(directory_path):
         # do conversion
+        # TODO if ebook_format is 'file'/'raw'/etc. always serve raw file and/or offer dialog for viewing/changing meta data in the generated download
         # TODO if file already in expected formatting serve raw file
         # TODO consider file caching (see note below about deleting/cleanup of temp files)
         log.info('convert ebook from %s into %s', directory_path, ebook_format)
