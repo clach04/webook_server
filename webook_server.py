@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+try:
+    # py2
+    from cgi import escape
+except ImportError:
+    # Python 3.8 and later
+    from html import escape
+
 import datetime
 import json
 import logging
@@ -163,14 +170,14 @@ def any_path(url_path):
             spaces1 = ' '*(50-len(filename))
             spaces2 = ' '*(20-len(size))
             # FIXME cgi escape needed!
-            if os.path.isdir(file_path): html += '<a href="' + filename + '/">' + filename + '/</a>'+spaces1+date+spaces2+'   -\n'
-            else: html += '<a href="' + filename + '">' + filename + '</a>'+spaces1+' '+date+spaces2+size+'\n'
+            if os.path.isdir(file_path): html += '<a href="' + escape(filename) + '/">' + escape(filename) + '/</a>'+spaces1+date+spaces2+'   -\n'
+            else: html += '<a href="' + escape(filename) + '">' + escape(filename) + '</a>'+spaces1+' '+date+spaces2+size+'\n'
         html += HTML_FOOTER
         response_headers = {'Content-Type': 'text/html','Content-Length': str(len(html))}
         response = flask.Response(html, status='200 OK', headers=response_headers)
         return response
     else:
-        raise NotImplementedError('unknown file stat')
+        raise NotImplementedError('unknown file stat')  # potentially raise 404?
     abort(404)
 
 
