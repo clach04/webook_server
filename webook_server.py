@@ -148,7 +148,7 @@ def any_path(url_path):
         log.info('browse %s', directory_path)
         # format vaugely like Apache and Nginx file browse / auto-index mode
         # TODO use a template
-        HTML_HEADER = """<html><head><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
+        HTML_HEADER = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
         HTML_FOOTER = "</pre><hr></body></html>"
         path_title = url_path
         os_path = directory_path
