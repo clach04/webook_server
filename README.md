@@ -14,8 +14,21 @@ As of now this is **not** an OPDS server, if you are looking for one, take a loo
       * https://github.com/clach04/dir2opds/wiki
       * https://github.com/clach04/dir2opds/wiki/Tested-Clients
 
+## Table Of Contents
 
-TODO add a TOC
+  * [Getting Started](#getting-started)
+    + [Debian/Ubuntu install dependencies](#debian-ubuntu-install-dependencies)
+    + [Python install dependencies](#python-install-dependencies)
+    + [Run](#run)
+    + [Sample Run](#sample-run)
+  * [Notes and config](#notes-and-config)
+    + [json config file](#json-config-file)
+    + [Operating System Environment Variables](#operating-system-environment-variables)
+    + [https / TLS / SSL support](#https---tls---ssl-support)
+  * [Known working environments](#known-working-environments)
+    + [Debian GNU/Linux 9 (stretch)](#debian-gnu-linux-9--stretch-)
+    + [Microsoft Windows](#microsoft-windows)
+
 
 ## Getting Started
 
