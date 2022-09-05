@@ -1,5 +1,23 @@
 # webook_server - Worst E-book server
 
+## Table Of Contents
+
+  * [Overview](#overview)
+  * [Getting Started](#getting-started)
+    + [Debian/Ubuntu install dependencies](#debian-ubuntu-install-dependencies)
+    + [Python install dependencies](#python-install-dependencies)
+    + [Run](#run)
+    + [Sample Run](#sample-run)
+  * [Notes and config](#notes-and-config)
+    + [json config file](#json-config-file)
+    + [Operating System Environment Variables](#operating-system-environment-variables)
+    + [https / TLS / SSL support](#https---tls---ssl-support)
+  * [Known working environments](#known-working-environments)
+    + [Debian GNU/Linux 9 (stretch)](#debian-gnu-linux-9--stretch-)
+    + [Microsoft Windows](#microsoft-windows)
+
+## Overview
+
 The worst  ebook conversion server.
 
 Given a directory of (possibly directories of) ebooks serve a web (http) interface of the files and automatically convert to the desired format (incomplete examples; mobi, epub, fb2, html, txt, rtf, etc.). The format is specified in the URL and browsing is supported. This works great with a web browser (including the Amazon Kindle Experimental Web Browser) and [KOReader](https://github.com/koreader/koreader).
@@ -13,21 +31,6 @@ As of now this is **not** an OPDS server, if you are looking for one, take a loo
   * https://github.com/dubyte/dir2opds
       * https://github.com/clach04/dir2opds/wiki
       * https://github.com/clach04/dir2opds/wiki/Tested-Clients
-
-## Table Of Contents
-
-  * [Getting Started](#getting-started)
-    + [Debian/Ubuntu install dependencies](#debian-ubuntu-install-dependencies)
-    + [Python install dependencies](#python-install-dependencies)
-    + [Run](#run)
-    + [Sample Run](#sample-run)
-  * [Notes and config](#notes-and-config)
-    + [json config file](#json-config-file)
-    + [Operating System Environment Variables](#operating-system-environment-variables)
-    + [https / TLS / SSL support](#https---tls---ssl-support)
-  * [Known working environments](#known-working-environments)
-    + [Debian GNU/Linux 9 (stretch)](#debian-gnu-linux-9--stretch-)
-    + [Microsoft Windows](#microsoft-windows)
 
 
 ## Getting Started
