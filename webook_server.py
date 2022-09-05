@@ -19,7 +19,7 @@ import time
 
 
 import flask
-from flask import Flask, abort, request
+from flask import Flask, abort, request, render_template
 
 # Optional Sentry support
 try:
@@ -80,13 +80,37 @@ def after_request(response):
     return response
 """
 
-
+# index
 @app.route("/")
 def hello():
     return '''<a href="mobi/">mobi/</a><br>
 <a href="file/">file/</a>
 '''
     # TODO loop through ebook_only_mimetypes and list links
+
+@app.route("/search")
+def search():
+    search_term = 'fb2'  # FIXME TODO param, rather than hard coded
+    log.info('search search_term %s', search_term)
+    # TODO regex?
+    search_term = search_term.lower()  # for now single search term, case insensitive compare
+    directory_path = config['ebook_dir']
+    directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
+    join = os.path.join  # for performance, rather than reduced typing
+    results = []  # TODO yield results?
+    for root, dirs, files in os.walk(directory_path):
+        for dir_name in dirs:
+            tmp_path = join(root, dir_name)
+            tmp_path_sans_prefix = tmp_path[directory_path_len:]
+            if search_term in tmp_path_sans_prefix.lower():
+                results.append(tmp_path_sans_prefix + '/')  # when appended add trailing slash for directories, avoid Flask oddness
+        for file_name in files:
+            tmp_path = join(root, file_name)
+            tmp_path_sans_prefix = tmp_path[directory_path_len:]
+            if search_term in tmp_path_sans_prefix.lower():
+                results.append(tmp_path_sans_prefix)
+                # TODO include file size?
+    return render_template('search_results.html', search_term=search_term, urls=results, ebook_format='file')
 
 @app.route("/<path:url_path>")
 def any_path(url_path):
