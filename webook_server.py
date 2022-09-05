@@ -88,10 +88,13 @@ def hello():
 '''
     # TODO loop through ebook_only_mimetypes and list links
 
-@app.route("/search")
+@app.route("/search", methods=['GET', 'POST'])
 def search():
-    search_term = 'fb2'  # FIXME TODO param, rather than hard coded
+    search_term = request.args.get('q')  # match most search engines
     log.info('search search_term %s', search_term)
+    if not search_term:
+        return render_template('search.html')
+
     # TODO regex?
     search_term = search_term.lower()  # for now single search term, case insensitive compare
     directory_path = config['ebook_dir']
