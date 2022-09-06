@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 try:
-    # py2
-    from cgi import escape
-except ImportError:
-    # Python 3.8 and later
+    # Python 3.x and later
     from html import escape
+except ImportError:
+    # py2 (or pre python 3.8)
+    from cgi import escape
 
 import datetime
 import json
