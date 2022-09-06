@@ -84,13 +84,20 @@ def after_request(response):
 @app.route("/")
 def hello():
     return '''<a href="mobi/">mobi/</a><br>
-<a href="file/">file/</a>
+<a href="file/">file/</a><br>
+<br>
+<a href="search">search</a>
 '''
     # TODO loop through ebook_only_mimetypes and list links
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
-    search_term = request.args.get('q')  # match most search engines
+    if request.method == 'GET':
+        search_term = request.args.get('q')  # match most search engines
+    elif request.method == 'POST':
+        search_term = request.form.get('q')  # match most search engines
+    else:
+        search_term = None
     log.info('search search_term %s', search_term)
     if not search_term:
         return render_template('search.html')
