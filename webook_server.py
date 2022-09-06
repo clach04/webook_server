@@ -84,6 +84,7 @@ def after_request(response):
 @app.route("/")
 def hello():
     return '''<a href="mobi/">mobi/</a><br>
+<a href="epub/">epub/</a><br>
 <a href="file/">file/</a><br>
 <br>
 <a href="search">search</a>
