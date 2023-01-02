@@ -40,6 +40,7 @@ except ImportError:
         pass
 
 
+from webook_core import ebook_only_mimetypes
 import ebook_conversion
 
 
@@ -62,11 +63,6 @@ TEMP_DIR = os.environ.get('TEMP', tempfile.gettempdir())
 dump_json = json.dumps
 load_json = json.loads
 
-ebook_only_mimetypes = {
-    'epub': 'application/epub+zip',
-    'mobi': 'application/x-mobipocket-ebook',
-    'txt': 'text/plain',  # or;  is the default value for all other cases. An unknown file type 
-}
 
 app = Flask(__name__)
 
