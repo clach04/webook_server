@@ -226,7 +226,7 @@ def opds_search(environ, start_response):
       <title>Catalog in /</title>
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
-      <updated>2023-01-01T10:53:39-08:00</updated><!-- TODO FIXME implement timestamp for now -->
+      <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
 
       <!-- koreader does NOT need an icon -->
 
@@ -392,7 +392,7 @@ def opds_browse(environ, start_response):
       <title>Catalog in /</title>
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
-      <updated>2023-01-01T10:53:39-08:00</updated><!-- TODO FIXME implement timestamp for now -->
+      <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
 
       <!-- koreader does NOT need an icon -->
 
@@ -496,7 +496,7 @@ def opds_root(environ, start_response):
       <title>Catalog in /</title>
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
-      <updated>2023-01-01T10:53:39-08:00</updated><!-- TODO FIXME implement timestamp for now -->
+      <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
 
       <!-- koreader does NOT need an icon -->
 
