@@ -138,9 +138,30 @@ WEBOOK_SELF_URL_PATH = os.environ['WEBOOK_SELF_URL_PATH']
 
 # FIXME from webook_server.py
 ebook_only_mimetypes = {
+    'cbr': 'application/x-cbr',  # TODO cbt and cb7
+    'cbz': 'application/x-cbz',  # application/vnd.comicbook+zip
     'epub': 'application/epub+zip',
+    'epub3': 'application/epub+zip',
+    'fb2': 'text/fb2+xml',  # application/fb2
     'mobi': 'application/x-mobipocket-ebook',
     'txt': 'text/plain',
+
+    # UNTESTED
+    'djv': 'image/vnd.djvu',
+    'djvu': 'image/vnd.djvu',  # application/djvu image/x-djvu
+
+    'htm': 'text/html',
+    'html': 'text/html',
+    'pdf': 'application/pdf',
+    'xhtml': 'application/xhtml+xml',
+
+    # Images
+    'gif': 'image/gif',
+    'jpg': 'image/jpeg',
+    'jpeg': 'image/jpeg',
+    'png': 'image/png',
+    'webp': 'image/webp',
+
     # TODO more formats
 }
 
