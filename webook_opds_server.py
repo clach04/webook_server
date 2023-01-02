@@ -131,6 +131,7 @@ def not_found(environ, start_response):
 
 config = {}
 config['ebook_dir'] = os.environ.get('EBOOK_DIR', os.path.abspath('testbooks'))
+WEBOOK_SELF_URL_PATH = os.environ['WEBOOK_SELF_URL_PATH']
 
 def opds_search(environ, start_response):
     # Returns a dictionary in which the values are lists
@@ -154,11 +155,11 @@ def opds_search(environ, start_response):
 
       <!-- koreader does NOT need an icon -->
 
-      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="http://192.168.11.41:8080/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
-''')]
+'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH))]
 
     search_term = q[0]  # TODO think this is correct, rather than concat all
     search_term = search_term.lower()  # for now single search term, case insensitive compare
@@ -244,7 +245,7 @@ def opds_search_meta(environ, start_response):
 
 
    <Url type="application/atom+xml"
-        template="http://192.168.11.41:8080/opds/search?q={searchTerms}"/>
+        template="{WEBOOK_SELF_URL_PATH}/opds/search?q={{searchTerms}}"/>
    <!-- 
    TODO FIXME hard coded URL
    -->
@@ -259,7 +260,7 @@ def opds_search_meta(environ, start_response):
    <InputEncoding>UTF-8</InputEncoding>
 </OpenSearchDescription>
 
-'''
+'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)  # NOTE searchTerms is escaped so as to preserve {searchTerms}
     ))
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
@@ -385,7 +386,7 @@ def opds_root(environ, start_response):
 
       <!-- koreader does NOT need an icon -->
 
-      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="http://192.168.11.41:8080/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
@@ -425,7 +426,7 @@ def opds_root(environ, start_response):
     </entry>
 
   </feed>
-'''
+'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)
             ))
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
