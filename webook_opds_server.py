@@ -165,6 +165,15 @@ ebook_only_mimetypes = {
     # TODO more formats
 }
 
+def guess_mimetype(filename):
+    """Guess mimetype based on filename (rather than content). Returns string.
+    """
+    # FIXME not sure this is very efficient
+    ebook_format = os.path.splitext(filename)[-1].lower()  # TODO if .zip back trace in case we have .fb2.zip, .rtf.zip, .txt.zip, etc.
+    ebook_format = ebook_format[1:]  # removing leading '.'
+    mimetype_str = ebook_only_mimetypes.get(ebook_format, 'application/octet-stream')  # TODO consider fallback to mimetypes.guess_type(os_path)[0]
+    return mimetype_str
+
 class BootMeta:
     def __init__(self, filename):
         self.filename = os.path.abspath(filename)  # expected to be absolute (relative would work)
@@ -184,10 +193,7 @@ class BootMeta:
         """
         # FIXME not sure this is very efficient
         filename = os.path.basename(self.filename)
-        ebook_format = os.path.splitext(filename)[-1].lower()  # TODO if .zip back trace in case we have .fb2.zip, .rtf.zip, .txt.zip, etc.  # FIXME where this was copied from
-        ebook_format = ebook_format[1:]  # removing leading '.'
-        mimetype_str = ebook_only_mimetypes.get(ebook_format, 'application/octet-stream')  # TODO consider fallback to mimetypes.guess_type(os_path)[0]
-        return mimetype_str
+        return guess_mimetype(filename)
 
     @property
     def title(self):
@@ -368,7 +374,7 @@ def opds_browse(environ, start_response):
             f = open(os_path, 'rb')
         except IOError:
             return not_found(environ, start_response)  # FIXME return a better error for internal server error
-        content_type = mimetypes.guess_type(os_path)[0]  # FIXME do better
+        content_type = guess_mimetype(os_path)
         headers = [('Content-type', content_type)]
         # TODO headers, date could be from filesystem
         start_response(status, headers)
