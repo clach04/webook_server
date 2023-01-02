@@ -262,6 +262,7 @@ def opds_search(environ, start_response):
             tmp_path = join(root, file_name)
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
+                metadata = BootMeta(tmp_path_sans_prefix)
                 # TODO include file size?
                 # TODO try and guess title and author name
                 # TODO is there a way to get "book information" link to work?
@@ -279,8 +280,8 @@ def opds_search(environ, start_response):
     </entry>
 '''.format(
         tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
-        author_name_surname_first='lastname, firstname',
-        mime_type="application/epub+zip"  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
+        author_name_surname_first=metadata.author,
+        mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         )))
     log.info('search of file system complete')
@@ -293,6 +294,7 @@ def opds_search(environ, start_response):
                 ('Content-type', 'application/xml'),  # "application/atom+xml; charset=UTF-8"
                 ('Cache-Control', 'no-cache, must-revalidate'),
                 ('Pragma', 'no-cache'),
+                ('Last-Modified', current_timestamp_for_header()),
                 ]
 
     result.append(to_bytes('''  </feed>
