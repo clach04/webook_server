@@ -107,7 +107,8 @@ def header_format_date_time(timestamp):
     )
 
 def current_timestamp_for_header():
-    return header_format_date_time(time.time())
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    #return header_format_date_time(time.time())
 
 
 def to_bytes(in_str):
