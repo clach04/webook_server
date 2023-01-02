@@ -19,9 +19,11 @@ import time
 try:
     # py2 (and <py3.8)
     from cgi import parse_qs
+    from urllib import quote
 except ImportError:
-    # py3
+    # py3 - 3.8+
     from urllib.parse import parse_qs
+    from urllib.parse import quote
 
 # TODO use a real XML library
 
@@ -250,9 +252,9 @@ def opds_search(environ, start_response):
       <entry>
           <title>{tmp_path_sans_prefix}/</title>
           <id>{tmp_path_sans_prefix}</id>
-          <link rel="subsection" href="/browse/{tmp_path_sans_prefix}" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="{tmp_path_sans_prefix}"></link>
+          <link rel="subsection" href="/file/{tmp_path_sans_prefix}" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="{tmp_path_sans_prefix}"></link>
       </entry>
-'''.format(tmp_path_sans_prefix=tmp_path_sans_prefix)))
+'''.format(tmp_path_sans_prefix=quote(tmp_path_sans_prefix))))
 
         for file_name in files:
             # any file names that hit
@@ -275,7 +277,7 @@ def opds_search(environ, start_response):
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
     </entry>
 '''.format(
-        tmp_path_sans_prefix=tmp_path_sans_prefix,
+        tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
         author_name_surname_first='lastname, firstname',
         mime_type="application/epub+zip"  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
@@ -399,7 +401,7 @@ def opds_browse(environ, start_response):
           <id>{filename}</id>
           <link rel="subsection" href="{href_path}" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="{filename}"></link>
       </entry>
-'''.format(filename=filename, href_path='/file/' + directory_path  + filename)))  # href need full path (/file/.....) not relative...
+'''.format(filename=filename, href_path=quote('/file/' + directory_path  + filename))))  # href need full path (/file/.....) not relative...
                 # FIXME TODO /file should be take from directory_path_split in case of /epub, etc.
                 #print(result[-1])
         else:
@@ -423,9 +425,9 @@ def opds_browse(environ, start_response):
 '''.format(
         author_name_surname_first=metadata.author,  #'lastname, firstname',
         filename=filename,  # FIXME need full path for href?
-        href_path='/file/' + directory_path  + filename,
-        href_path_epub='/epub/' + directory_path  + filename,
-        href_path_mobi='/mobi/' + directory_path  + filename,
+        href_path=quote('/file/' + directory_path  + filename),
+        href_path_epub=quote('/epub/' + directory_path  + filename),
+        href_path_mobi=quote('/mobi/' + directory_path  + filename),
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         title=metadata.title
