@@ -134,6 +134,47 @@ config = {}
 config['ebook_dir'] = os.environ.get('EBOOK_DIR', os.path.abspath('testbooks'))
 WEBOOK_SELF_URL_PATH = os.environ['WEBOOK_SELF_URL_PATH']
 
+##### TODO move into webok_core
+
+# FIXME from webook_server.py
+ebook_only_mimetypes = {
+    'epub': 'application/epub+zip',
+    'mobi': 'application/x-mobipocket-ebook',
+    'txt': 'text/plain',
+}
+
+class BootMeta:
+    def __init__(self, filename):
+        self.filename = os.path.abspath(filename)  # expected to be absolute (relative would work)
+
+    @property
+    def author(self):
+        """Guess author name based on filename (rather than content). Returns string:
+            Lastname, Firstname
+        Currently assumes single author
+        """
+        # TODO add guess logic based on filename OR dig into metadata if exists
+        return ''  # or None?
+
+    @property
+    def mimetype(self):
+        """Guess mimetype based on filename (rather than content). Returns string.
+        """
+        filename = os.path.basename(self.filename)
+        ebook_format = os.path.splitext(filename)[0].lower()  # TODO if .zip back trace in case we have .fb2.zip, .rtf.zip, .txt.zip, etc.
+        mimetype_str = ebook_only_mimetypes.get(ebook_format, 'application/octet-stream')  # TODO consider fallback to mimetypes.guess_type(os_path)[0]
+        return mimetype_str
+
+    @property
+    def title(self):
+        """Guess book title based on filename (rather than content). Returns string.
+        """
+        filename = os.path.basename(self.filename)  # bother messing with file extension?
+        return filename
+
+
+##### TODO move into webok_core
+
 def opds_search(environ, start_response):
     # Returns a dictionary in which the values are lists
     if environ.get('QUERY_STRING'):
@@ -329,12 +370,13 @@ def opds_browse(environ, start_response):
                 #print(result[-1])
         else:
             # got a file (maybe an slink)
+            metadata = BootMeta(file_path)
             # TODO include file size?
             # TODO try and guess title and author name
             # TODO is there a way to get "book information" link to work?
             result.append(to_bytes('''
     <entry>
-        <title>{filename}</title>
+        <title>{title}</title>
         <author>
             <name>{author_name_surname_first}</name>
         </author>
@@ -345,10 +387,11 @@ def opds_browse(environ, start_response):
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{filename}"/>
     </entry>
 '''.format(
+        author_name_surname_first=metadata.author,  #'lastname, firstname',
         filename=filename,  # FIXME need full path for href?
-        author_name_surname_first='lastname, firstname',
-        mime_type="application/epub+zip"  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
+        mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
+        title=metadata.title
         )))
 
     headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache - koreader will show old directory info
