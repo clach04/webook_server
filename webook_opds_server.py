@@ -344,8 +344,12 @@ def opds_browse(environ, start_response):
     directory_path_split = environ['PATH_INFO'].split('/', 2)  # /file/some/path
     log.info('directory_path_split  %s', directory_path_split)
 
-    directory_path = directory_path_split[2]  # TODO what if missing
-    log.info('browse %s', directory_path)
+    try:
+        directory_path = directory_path_split[2]
+    except IndexError:
+        # got /file rather than /file/
+        directory_path = ''
+    log.info('browse %r', directory_path)
 
     if directory_path:
         directory_path = os.path.normpath(directory_path)
