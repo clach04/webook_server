@@ -141,6 +141,7 @@ ebook_only_mimetypes = {
     'epub': 'application/epub+zip',
     'mobi': 'application/x-mobipocket-ebook',
     'txt': 'text/plain',
+    # TODO more formats
 }
 
 class BootMeta:
@@ -160,8 +161,10 @@ class BootMeta:
     def mimetype(self):
         """Guess mimetype based on filename (rather than content). Returns string.
         """
+        # FIXME not sure this is very efficient
         filename = os.path.basename(self.filename)
-        ebook_format = os.path.splitext(filename)[0].lower()  # TODO if .zip back trace in case we have .fb2.zip, .rtf.zip, .txt.zip, etc.
+        ebook_format = os.path.splitext(filename)[-1].lower()  # TODO if .zip back trace in case we have .fb2.zip, .rtf.zip, .txt.zip, etc.  # FIXME where this was copied from
+        ebook_format = ebook_format[1:]  # removing leading '.'
         mimetype_str = ebook_only_mimetypes.get(ebook_format, 'application/octet-stream')  # TODO consider fallback to mimetypes.guess_type(os_path)[0]
         return mimetype_str
 
@@ -381,14 +384,17 @@ def opds_browse(environ, start_response):
             <name>{author_name_surname_first}</name>
         </author>
         <id>{filename}</id>
-        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{filename}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
-        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{filename}"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{filename}"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{filename}"/>
+        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="{href_path}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
+        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="{href_path}"/>
+        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
+        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
     </entry>
 '''.format(
         author_name_surname_first=metadata.author,  #'lastname, firstname',
         filename=filename,  # FIXME need full path for href?
+        href_path='/file/' + directory_path  + filename,
+        href_path_epub='/epub/' + directory_path  + filename,
+        href_path_mobi='/mobi/' + directory_path  + filename,
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         title=metadata.title
