@@ -76,6 +76,8 @@ Then open a browser to http://localhost:8080/... or issue:
             "ebook_dir": "sample_reading_media"
         }
 
+if setting tmp dir, mkdir -p /tmp/ebookserver/....
+
 4. Run the server with the config file:
 
         python webook_server.py sample_reading_media.json
@@ -140,6 +142,21 @@ Which will generate a certificate valid for 1 year.
 ## Known working environments
 
 Known to work under Linux with
+
+### Debian / Ubuntu / Armbian
+
+DISTRIB_DESCRIPTION="Ubuntu 20.04.3 LTS"
+NAME="Ubuntu"
+VERSION="20.04.3 LTS (Focal Fossa)"
+ID=ubuntu
+ID_LIKE=debian
+PRETTY_NAME="Armbian 21.08.6 Focal"
+VERSION_ID="20.04"
+
+  * Python 3.8.10 (default, Mar 15 2022, 12:22:08)
+      * Flask 1.1.1
+      * ebook_conversion calibre_4.99.4
+
 
 ### Debian GNU/Linux 9 (stretch)
 
