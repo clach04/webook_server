@@ -208,6 +208,7 @@ class BootMeta:
 ##### TODO move into webok_core
 
 def opds_search(environ, start_response):
+    log.info('opds_search')
     # Returns a dictionary in which the values are lists
     if environ.get('QUERY_STRING'):
         get_dict = parse_qs(environ['QUERY_STRING'])
@@ -300,6 +301,7 @@ def opds_search(environ, start_response):
     return result
 
 def opds_search_meta(environ, start_response):
+    log.info('opds_search_meta')
     status = '200 OK'
     headers = [('Content-type', 'application/xml')]
     result = []
@@ -345,6 +347,7 @@ def opds_search_meta(environ, start_response):
 
 
 def opds_browse(environ, start_response):
+    log.info('opds_browse')
     status = '200 OK'
     headers = [('Content-type', 'application/atom+xml;profile=opds-catalog;kind=acquisition')]
     result = []
@@ -371,7 +374,7 @@ def opds_browse(environ, start_response):
     log.info('os_path %s', os_path)
 
     if os.path.isfile(os_path):
-        log.error('serve file')
+        log.info('serve file')
         try:
             f = open(os_path, 'rb')
         except IOError:
@@ -381,6 +384,30 @@ def opds_browse(environ, start_response):
         # TODO headers, date could be from filesystem
         start_response(status, headers)
         return f
+
+    log.info('browsing directory')
+
+    result.append(to_bytes('''<?xml version="1.0" encoding="UTF-8"?>
+  <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+      <title>Catalog in /</title>
+      <id>/</id>
+      <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
+      <updated>2023-01-01T10:53:39-08:00</updated><!-- TODO FIXME implement timestamp for now -->
+
+      <!-- koreader does NOT need an icon -->
+
+      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+    <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
+    <opensearch:startIndex>1</opensearch:startIndex>
+
+      <entry>
+          <title>BROWSE Root</title>
+          <id>BROWSE</id>
+          <link rel="subsection" href="/file/" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="BROWSE"></link>
+      </entry>
+
+'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)
+            ))
 
     files = os.listdir(os_path)
     for filename in files:
@@ -433,12 +460,16 @@ def opds_browse(environ, start_response):
         title=metadata.title
         )))
 
+    result.append(to_bytes('''  </feed>
+'''))
+
     headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache - koreader will show old directory info
     start_response(status, headers)
     return result
 
 
 def opds_root(environ, start_response):
+    log.info('opds_root')
     status = '200 OK'
     headers = [('Content-type', 'application/atom+xml;profile=opds-catalog;kind=acquisition')]
     result = []
