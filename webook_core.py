@@ -1,5 +1,12 @@
 
+import json
+import logging
 import os
+
+
+log = logging.getLogger(__name__)
+logging.basicConfig()
+log.setLevel(level=logging.INFO)
 
 
 ebook_only_mimetypes = {
@@ -66,3 +73,28 @@ class BootMeta:
         """
         filename = os.path.basename(self.filename)  # bother messing with file extension?
         return filename
+
+
+def load_config(config_filename):
+    log.info('Attempt to load config file %r', config_filename)
+
+    f = open(config_filename, 'rb')
+    data = f.read()
+    data = data.decode('utf-8')
+    f.close()
+
+    config = json.loads(data)
+
+    default_net_config = {
+        'debug': False,
+        'port': int(os.environ.get('LISTEN_PORT', 8080)),
+        'host': os.environ.get('LISTEN_ADDRESS', '0.0.0.0'),  # '127.0.0.1',
+    }
+    default_net_config.update(config.get('config', {}))
+    config['config'] = default_net_config
+    config['config']['port'] = int(os.environ.get('LISTEN_PORT', config['config']['port']))  # FIXME this override is more complicated than it should be
+    config['config']['host'] = os.environ.get('LISTEN_ADDRESS', config['config']['host'])  # FIXME this override is more complicated than it should be
+    config['ebook_dir'] = os.environ.get('EBOOK_DIR', config.get('ebook_dir', os.path.abspath('books')))
+    config['self_url_path'] = os.environ.get('WEBOOK_SELF_URL_PATH', config.get('self_url_path', None))  # if this is not set, OPDS cannot proceed - not safe to default as koreader will silently fail with BAD urls for metadata lookup
+
+    return config
