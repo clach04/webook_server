@@ -96,6 +96,7 @@ def load_config(config_filename):
     config['config']['port'] = int(os.environ.get('LISTEN_PORT', config['config']['port']))  # FIXME this override is more complicated than it should be
     config['config']['host'] = os.environ.get('LISTEN_ADDRESS', config['config']['host'])  # FIXME this override is more complicated than it should be
     config['ebook_dir'] = os.environ.get('EBOOK_DIR', config.get('ebook_dir', os.path.abspath('books')))
+    config['ebook_dir'] = os.path.abspath(config['ebook_dir'])
     config['self_url_path'] = os.environ.get('WEBOOK_SELF_URL_PATH', config.get('self_url_path', None))  # if this is not set, OPDS cannot proceed - not safe to default as koreader will silently fail with BAD urls for metadata lookup
     config['temp_dir'] = config.get('temp_dir', os.environ.get('TEMP', tempfile.gettempdir()))
 
