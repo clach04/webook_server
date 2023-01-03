@@ -221,6 +221,7 @@ if __name__ == "__main__":
         config_filename = 'config.json'
     log.info('Using config file %r', config_filename)
 
+    # FIXME TODO use webook_core.load_config() instead
     f = open(config_filename, 'rb')
     data = f.read()
     data = data.decode('utf-8')

@@ -34,7 +34,7 @@ try:
 except ImportError:
     bjoern = None
 
-from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype
+from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, load_config
 
 log = logging.getLogger(__name__)
 logging.basicConfig()
@@ -133,9 +133,9 @@ def not_found(environ, start_response):
 </body></html>''')]
 
 
+# NOTE global config - see webook_core.load_config()
+global config
 config = {}
-config['ebook_dir'] = os.environ.get('EBOOK_DIR', os.path.abspath('testbooks'))
-WEBOOK_SELF_URL_PATH = os.environ['WEBOOK_SELF_URL_PATH']
 
 
 def opds_search(environ, start_response):
@@ -165,7 +165,7 @@ def opds_search(environ, start_response):
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
-'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH))]
+'''.format(WEBOOK_SELF_URL_PATH=config['self_url_path']))]
 
     search_term = q[0]  # TODO think this is correct, rather than concat all
     search_term = search_term.lower()  # for now single search term, case insensitive compare
@@ -269,7 +269,7 @@ def opds_search_meta(environ, start_response):
    <InputEncoding>UTF-8</InputEncoding>
 </OpenSearchDescription>
 
-'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)  # NOTE searchTerms is escaped so as to preserve {searchTerms}
+'''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])  # NOTE searchTerms is escaped so as to preserve {searchTerms}
     ))
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
@@ -339,7 +339,7 @@ def opds_browse(environ, start_response):
           <link rel="subsection" href="/file/" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="BROWSE"></link>
       </entry>
 
-'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)
+'''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])
             ))
 
     files = os.listdir(os_path)
@@ -403,6 +403,9 @@ def opds_browse(environ, start_response):
 
 def opds_root(environ, start_response):
     log.info('opds_root')
+    if not config.get('self_url_path'):
+        raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
+
     status = '200 OK'
     headers = [('Content-type', 'application/atom+xml;profile=opds-catalog;kind=acquisition')]
     result = []
@@ -473,7 +476,7 @@ def opds_root(environ, start_response):
     </entry>
 
   </feed>
-'''.format(WEBOOK_SELF_URL_PATH=WEBOOK_SELF_URL_PATH)
+'''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])
             ))
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
@@ -486,11 +489,23 @@ def opds_root(environ, start_response):
 def main(argv=None):
     argv = argv or sys.argv
     print('Python %s on %s' % (sys.version, sys.platform))
-    listen_port = int(os.environ.get('LISTEN_PORT', 8080))
-    listen_address = os.environ.get('LISTEN_ADDRESS', '0.0.0.0')  # default to listen publically
+
+    try:
+        config_filename = argv[1]
+    except IndexError:
+        config_filename = 'config.json'
+    log.info('Using config file %r', config_filename)
+
+    global config
+    config = load_config(config_filename)
+
+    listen_port = config['config']['port']
+    listen_address = config['config']['host']
     local_ip = determine_local_ipaddr()
     log.info('Listen on: %r', (listen_address, listen_port))
+    log.info('OPDS metadata publish URL: %r', (config['self_url_path']))
     log.info('Starting server: http://%s:%d', local_ip, listen_port)
+
     if bjoern:
         log.info('Using: bjoern')
         bjoern.run(opds_root, listen_address, listen_port)
