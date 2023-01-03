@@ -363,7 +363,7 @@ def opds_browse(environ, start_response):
                                 ('Content-type', content_type),
                                 ('Content-Disposition', 'attachment; filename=%s' % result_ebook_filename),  # FIXME TODO presumbly result_ebook_filename needs some sort of escaping here....?
                             ]
-        # TODO headers, date could be from filesystem
+        headers.append(('Last-Modified', current_timestamp_for_header()))  # TODO headers, date could be from filesystem
         start_response(status, headers)
         return f
 
