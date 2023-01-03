@@ -430,7 +430,7 @@ def opds_browse(environ, start_response):
         </author>
         <id>{filename}</id>
         <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{href_path}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
-        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="{href_path}"/>
+        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{href_path}"/>
         <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
         <link type="text/plain" rel="http://opds-spec.org/acquisition" title="Text (txt) convert" href="/txt/{href_path}"/>
@@ -439,8 +439,8 @@ def opds_browse(environ, start_response):
         author_name_surname_first=metadata.author,  #'lastname, firstname',
         filename=filename,  # FIXME need full path for href?
         href_path=quote( directory_path  + filename),
-        href_path_epub=quote('/epub/' + directory_path  + filename),
-        href_path_mobi=quote('/mobi/' + directory_path  + filename),
+        href_path_epub=quote('/epub/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
+        href_path_mobi=quote('/mobi/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         title=metadata.title
