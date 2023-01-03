@@ -180,6 +180,9 @@ def opds_search(environ, start_response):
     directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
     join = os.path.join  # for performance, rather than reduced typing
     log.info('searching file system')
+    #log.debug('directory_path %r', directory_path)
+    #log.debug('directory_path_len %r', directory_path_len)
+    #log.debug('test path  %r', os.path.join(directory_path, '1234567.890')[directory_path_len:])
     for root, dirs, files in os.walk(directory_path):
         for dir_name in dirs:
             # any directory names that hit
@@ -559,6 +562,8 @@ def main(argv=None):
 
     global config
     config = load_config(config_filename)
+    if not config.get('self_url_path'):
+        raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
 
     listen_port = config['config']['port']
     listen_address = config['config']['host']
