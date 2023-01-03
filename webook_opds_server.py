@@ -40,6 +40,7 @@ try:
 except ImportError:
     werkzeug = None
 
+import ebook_conversion
 from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, load_config
 
 log = logging.getLogger(__name__)
@@ -301,6 +302,13 @@ def opds_browse(environ, start_response):
         directory_path = ''
     log.info('browse %r', directory_path)
 
+    try:
+        operation_requested = directory_path_split[1]
+    except IndexError:
+        # missing, so assume browsing for file
+        operation_requested = 'file'
+    log.info('operation_requested %r', operation_requested)
+
     if directory_path:
         directory_path = os.path.normpath(directory_path)
         os_path = os.path.join(config['ebook_dir'], directory_path)
@@ -314,12 +322,47 @@ def opds_browse(environ, start_response):
 
     if os.path.isfile(os_path):
         log.info('serve file')
+        existing_ebook_format = os.path.splitext(os_path)[-1].lower()
+        existing_ebook_format = existing_ebook_format[1:]  # removing leading '.'
+        log.info('serve existing_ebook_format %r', existing_ebook_format)
+        do_conversion = True
+        if existing_ebook_format == operation_requested or operation_requested in ('file'):
+            do_conversion = False
+            operation_requested = existing_ebook_format
+            book_to_serve = os_path
+        result_ebook_filename =  os.path.basename(os_path)
+
+        if do_conversion:
+            # do conversion
+            # TODO consider file caching (see note below about deleting/cleanup of temp files)
+            log.info('convert ebook from %s into %s', os_path, operation_requested)
+            # TODO if same format, do not convert
+            # TODO use meta data in file to generate filename
+            #result_ebook_filename = 'fixme_generate_filename.' + operation_requested
+            result_ebook_filename = os.path.splitext(result_ebook_filename)[0] + '.' + operation_requested  # NOTE unsure if koreader will pay attention to this filename
+            tmp_ebook_filename = 'fixme_generate_filename.' + operation_requested
+            tmp_ebook_filename = os.path.join(config['temp_dir'], tmp_ebook_filename)
+
+            # could delete if already exists
+            if os.path.exists(tmp_ebook_filename):
+                os.remove(tmp_ebook_filename)
+
+            # simple caching support
+            if not os.path.exists(tmp_ebook_filename):
+                ebook_conversion.convert(os_path, tmp_ebook_filename)
+            book_to_serve = tmp_ebook_filename
+            # now serve content of tmp_ebook_filename, then potentially delete tmp_ebook_filename
+
+        #check actual extension with operation_requested
         try:
-            f = open(os_path, 'rb')
+            f = open(book_to_serve, 'rb')
         except IOError:
             return not_found(environ, start_response)  # FIXME return a better error for internal server error
-        content_type = guess_mimetype(os_path)
-        headers = [('Content-type', content_type)]
+        content_type = guess_mimetype(result_ebook_filename)
+        headers = [
+                                ('Content-type', content_type),
+                                ('Content-Disposition', 'attachment; filename=%s' % result_ebook_filename),  # FIXME TODO presumbly result_ebook_filename needs some sort of escaping here....?
+                            ]
         # TODO headers, date could be from filesystem
         start_response(status, headers)
         return f
@@ -383,15 +426,16 @@ def opds_browse(environ, start_response):
             <name>{author_name_surname_first}</name>
         </author>
         <id>{filename}</id>
-        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="{href_path}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
+        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{href_path}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
         <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="{href_path}"/>
         <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
+        <link type="text/plain" rel="http://opds-spec.org/acquisition" title="Text (txt) convert" href="/txt/{href_path}"/>
     </entry>
 '''.format(
         author_name_surname_first=metadata.author,  #'lastname, firstname',
         filename=filename,  # FIXME need full path for href?
-        href_path=quote('/file/' + directory_path  + filename),
+        href_path=quote( directory_path  + filename),
         href_path_epub=quote('/epub/' + directory_path  + filename),
         href_path_mobi=quote('/mobi/' + directory_path  + filename),
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
@@ -429,7 +473,18 @@ def opds_root(environ, start_response):
         return opds_search(environ, start_response)
     if path_info.startswith('/file'):
         return opds_browse(environ, start_response)
+    if path_info.startswith('/epub'):
+        return opds_browse(environ, start_response)
+    if path_info.startswith('/fb2'):
+        return opds_browse(environ, start_response)
+    if path_info.startswith('/fb2.zip'):
+        return opds_browse(environ, start_response)
+    if path_info.startswith('/mobi'):
+        return opds_browse(environ, start_response)
+    if path_info.startswith('/txt'):
+        return opds_browse(environ, start_response)
     if path_info != '/':
+        log.info('Returning ERROR 404 %r', path_info)
         return not_found(environ, start_response)
 
     result.append(to_bytes(
@@ -511,6 +566,8 @@ def main(argv=None):
     log.info('Listen on: %r', (listen_address, listen_port))
     log.info('OPDS metadata publish URL: %r', (config['self_url_path']))
     log.info('Starting server: http://%s:%d', local_ip, listen_port)
+    log.info('using temporary directory temp_dir: %s', config['temp_dir'])
+    log.info('Serving from ebook_dir: %s', config['ebook_dir'])
 
     if werkzeug:
         log.info('Using: werkzeug')
