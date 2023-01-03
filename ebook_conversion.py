@@ -1,7 +1,7 @@
 """Wrapper arond Calibre ebook conversion
 
 1) as lib, wrapper functions around calibre
-2) NOT IMPLEMENTED! as exe wrapper for ebook-convert
+2) as exe wrapper for ebook-convert
 
 All implementations rely on temp disk space and will spool to disk.
 """
