@@ -34,6 +34,12 @@ try:
 except ImportError:
     bjoern = None
 
+try:
+    import werkzeug
+    import werkzeug.serving
+except ImportError:
+    werkzeug = None
+
 from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, load_config
 
 log = logging.getLogger(__name__)
@@ -506,7 +512,11 @@ def main(argv=None):
     log.info('OPDS metadata publish URL: %r', (config['self_url_path']))
     log.info('Starting server: http://%s:%d', local_ip, listen_port)
 
-    if bjoern:
+    if werkzeug:
+        log.info('Using: werkzeug')
+        #werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=True, use_reloader=True)
+        werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=False, use_reloader=False)
+    elif bjoern:
         log.info('Using: bjoern')
         bjoern.run(opds_root, listen_address, listen_port)
     else:
