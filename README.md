@@ -37,6 +37,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
       * Example; `book` would match a file named "mybook.txt" and a directory called "books"
   * OPTIONAL - Ebook Conversion support (currrently via Calibre ebook convert tool)
   * OPDS support has no dependencies outside of Python stdlib BUT will make use of addition WSGI servers if available
+      * does **not** support ebook metadata (including covers/thumbails)
   * Web browser support requires Flask
   * Works with Python 3.x and 2.6+
 
