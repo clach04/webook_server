@@ -3,6 +3,7 @@
 ## Table Of Contents
 
   * [Overview](#overview)
+    + [Features](#features)
   * [Getting Started](#getting-started)
     + [Debian/Ubuntu install dependencies](#debian-ubuntu-install-dependencies)
     + [Python install dependencies](#python-install-dependencies)
@@ -18,13 +19,35 @@
 
 ## Overview
 
-The worst  ebook conversion server.
+This is either:
+
+  * 🏴󠁧󠁢󠁳󠁣󠁴󠁿 The [wee](https://dictionary.cambridge.org/us/dictionary/english/wee) book server
+  * 💩📖 The worst  ebook conversion server
+
+Basic ebook server that doesn't require a database.
 
 Given a directory of (possibly directories of) ebooks serve a web (http) interface of the files and automatically convert to the desired format (incomplete examples; mobi, epub, fb2, html, txt, rtf, etc.). The format is specified in the URL and browsing is supported. This works great with a web browser (including the Amazon Kindle Experimental Web Browser) and [KOReader](https://github.com/koreader/koreader).
 
-The closest equivilent of this tool is [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi.
+### Features
 
-As of now this is **not** an OPDS server, if you are looking for one, take a look at:
+  * Serve directory of ebooks to either a web browser or an OPDS client
+  * Simple search support for both web browser and OPDS client/readers
+      * Search is case insensitive (single term) partial match support (i.e. no regex support) for path names and directories
+      * Example; `book` would match a file named "mybook.txt" and a directory called "books"
+  * OPTIONAL - Ebook Conversion support (currrently via Calibre ebook convert tool)
+  * OPDS support has no dependencies outside of Python stdlib BUT will make use of addition WSGI servers if available
+  * Web browser support requires Flask
+  * Works with Python 3.x and 2.6+
+
+The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
+
+  * webook_server.py is for web browsers (e.g. the Kindle web browser)
+  * webook_opds_server.py is for OPDS clients like:
+      * https://github.com/koreader/koreader
+      * http://alreader.kms.ru/
+      * https://fbreader.org/
+
+Also take a look at:
 
   * https://github.com/seblucas/cops - requires calibre2opds
   * https://github.com/calibre2opds/calibre2opds
@@ -39,6 +62,8 @@ Either use Operating System packages or Python packages
 
 ### Debian/Ubuntu install dependencies
 
+ONLY needed for the web browser version, not needed for OPDS
+
 For Python 2.x deployment:
 
     sudo apt install calibre python-flask
@@ -51,6 +76,8 @@ For Python 3.x deployment (with calibre ebook-convert exe - likely Python2):
 ### Python install dependencies
 
 NOTE Currently relies on [Calibre](https://github.com/kovidgoyal/calibre) ebook-convert (not documented in the Python dependency install notes below).
+
+ONLY needed for the web browser version, not needed for OPDS
 
 If installing/working with a source checkout issue:
 
