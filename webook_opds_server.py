@@ -18,12 +18,16 @@ import time
 
 try:
     # py2 (and <py3.8)
+    from cgi import escape
     from cgi import parse_qs
     from urllib import quote
+    #from urllib import quote_plus as quote
 except ImportError:
     # py3 - 3.8+
+    from html import escape
     from urllib.parse import parse_qs
     from urllib.parse import quote
+    #from urllib.parse import quote_plus as quote
 
 # TODO use a real XML library
 
@@ -192,11 +196,13 @@ def opds_search(environ, start_response):
                 # FIXME escaping missing - template and/or xml API usage
                 result.append(to_bytes('''
       <entry>
-          <title>{tmp_path_sans_prefix}/</title>
+          <title>{title}/</title>
           <id>{tmp_path_sans_prefix}</id>
           <link rel="subsection" href="/file/{tmp_path_sans_prefix}" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="{tmp_path_sans_prefix}"></link>
       </entry>
-'''.format(tmp_path_sans_prefix=quote(tmp_path_sans_prefix))))
+'''.format(
+        title=escape(dir_name, quote=True),
+        tmp_path_sans_prefix=quote(tmp_path_sans_prefix))))
 
         for file_name in files:
             # any file names that hit
@@ -209,7 +215,7 @@ def opds_search(environ, start_response):
                 # TODO is there a way to get "book information" link to work?
                 result.append(to_bytes('''
     <entry>
-        <title>{tmp_path_sans_prefix}</title>
+        <title>{title}</title>
         <author>
             <name>{author_name_surname_first}</name>
         </author>
@@ -220,6 +226,7 @@ def opds_search(environ, start_response):
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
     </entry>
 '''.format(
+        title=escape(file_name, quote=True),
         tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
         author_name_surname_first=metadata.author,
         mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
