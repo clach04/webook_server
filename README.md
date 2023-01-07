@@ -120,15 +120,20 @@ if setting tmp dir, mkdir -p /tmp/ebookserver/....
 ### json config file
 
   * config for web server config
-  * ebook_dir - directory to serve, if omitted defaults to current directory
+  * ebook_dir - directory to serve, if omitted defaults to current directory (`./`)
   * temp_dir - temporary location on disk to store generated files. Will use OS environment variable TEMP if
  omitted, if that's missing system temp location. NOTE recommend using a temporary file system, on devices like RaspberryPi and SBCs with SD Cards, recommend using directory that is NOT located on SD Card to preserve card
+ * self_url_path - for OPDS server, this is the http address of the server and is required for search to work correctly. Example `http://123.45.67.89:8080`
 
 ### Operating System Environment Variables
 
-  * CALIBRE_EBOOK_CONVERT_EXE - full path to ebook-convert exe (if  not using Calibre as a library). For Windows do NOT set with double quotes, even for paths with spaces
+  * CALIBRE_EBOOK_CONVERT_EXE - full path to ebook-convert exe (if not using Calibre as a library). For Windows do NOT set with double quotes, even for paths with spaces
+  * USE_CALIBRE_EBOOK_CONVERT_EXE - if set forces the use of ebook-convert exe (that is, do not use Calibre as a library)
   * TEMP - override for temp disk location, see `temp_dir` in json config
-  * SENTRY_DSN - optional Sentry token
+  * EBOOK_DIR - override for ebook location, see `ebook_dir` in json config
+  * SENTRY_DSN - optional Sentry token - NOT applicable to OPDS server
+  * LISTEN_PORT - OPDS override for config file `config.port`
+  * LISTEN_ADDRESS - OPDS override for config file `config.host`
 
 ### https / TLS / SSL support
 
