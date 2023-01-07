@@ -55,6 +55,20 @@ log.setLevel(level=logging.DEBUG)
 def determine_local_ipaddr():
     local_address = None
 
+    # Most portable for py2 and 3
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.254.254.254', 1))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '127.0.0.1'
+    finally:
+        s.close()
+    if not ip.startswith('127.'):
+        local_address = ip
+
     # Most portable (for modern versions of Python)
     if hasattr(socket, 'gethostbyname_ex'):
         for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
@@ -96,7 +110,7 @@ def determine_local_ipaddr():
 
     if not local_address:
         # really? Oh well lets connect to a remote socket (Google DNS server)
-        # and see what IP we use them
+        # and see what public IP we use them
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 53))
         ip = s.getsockname()[0]
