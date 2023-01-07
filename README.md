@@ -132,7 +132,7 @@ if setting tmp dir, mkdir -p /tmp/ebookserver/....
 
 ### https / TLS / SSL support
 
-https support is optional. There is no authentication/authorization support, recommendation is to use a reverse proxy *but* Flask does make it easy and quick to expose over https.
+https support is optional for the web browser version, there is no https support for the OPDS server. There is no authentication/authorization support, recommendation is to use a reverse proxy *but* Flask does make it easy and quick to expose over https.
 
 NOTE https requires pyopenssl which is not installed via the requirements above.
 
