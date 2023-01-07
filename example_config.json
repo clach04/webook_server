@@ -6,5 +6,7 @@
         "#ssl_context": "adhoc",
         "#ssl_context": ["cert.pem", "key.pem"]
     }
-
+    "#ebook_dir": "C:\\windows\\directory\\example\\note_double_slash_in_json",
+    "#ebook_dir": "/linux/example/books",
+    "#self_url_path": "http://123.45.67.89_or_hostname:8080"
 }
