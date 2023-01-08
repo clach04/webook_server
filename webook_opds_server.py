@@ -571,6 +571,10 @@ def main(argv=None):
     if not config.get('self_url_path'):
         raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
 
+    log.info('Python %s on %s', sys.version, sys.platform)
+    log.info('ebook_conversion %s', ebook_conversion.convert_version())
+
+
     listen_port = config['config']['port']
     listen_address = config['config']['host']
     local_ip = determine_local_ipaddr()
