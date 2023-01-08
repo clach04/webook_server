@@ -647,7 +647,7 @@ def main(argv=None):
         cherrypy.engine.start()
         cherrypy.engine.block()
     else:
-        log.info('Using: wsgiref.simple_server')
+        log.info('Using: wsgiref.simple_server %s', wsgiref.simple_server.__version__)
         httpd = make_server(listen_address, listen_port, opds_root)
         httpd.serve_forever()
 
