@@ -297,9 +297,6 @@ def opds_search_meta(environ, start_response):
 
    <Url type="application/atom+xml"
         template="{WEBOOK_SELF_URL_PATH}/opds/search?q={{searchTerms}}"/>
-   <!-- 
-   TODO FIXME hard coded URL
-   -->
 
    <Query role="example" searchTerms="shakespeare hamlet" />
    <Query role="example" searchTerms="doyle detective" />
@@ -542,34 +539,7 @@ def opds_root(environ, start_response):
           <link rel="subsection" href="/file/" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="BROWSE"></link>
       </entry>
 
-      <entry>
-          <title>demo_file.txt</title>
-          <id>/demo_file.txt</id>
-          <link rel="http://opds-spec.org/acquisition" href="/demo_file.txt" type="text/plain; charset=utf-8" title="aaa_text.txt"></link>
-<link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB (no images)" length="260729" href="https://www.gutenberg.org/ebooks/174.epub.noimages"/>
-<link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (no images)" length="398836" href="https://www.gutenberg.org/ebooks/174.kindle.noimages"/>
-          <published></published>
-          <updated></updated>
-      </entry>
-
-      <entry>
-          <title>comics_dir/</title>
-          <id>/comics_dir</id>
-          <link rel="subsection" href="/comics_dir" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="comics"></link>
-          <published></published>
-          <updated></updated>
-      </entry>
-
-    <entry>
-        <title>The Picture of Dorian Gray</title>
-        <author>
-            <name>Surname, Firstname</name>
-        </author>
-        <id>some_sort_of_unique_id</id>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="Original" href="/file/path/here_orig"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB" href="/file/path/here1"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi)" href="/file/path/here2"/>
-    </entry>
+      <!-- TODO add search recent support -->
 
   </feed>
 '''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])
