@@ -11,20 +11,27 @@ log.setLevel(level=logging.INFO)
 
 
 ebook_only_mimetypes = {
-    'cbr': 'application/x-cbr',  # TODO cbt and cb7
+    'cbr': 'application/x-cbr',  # application/vnd.comicbook-rar
+    'cbt': 'application/vnd.comicbook+tar',
+    'cb7': 'application/x-7z-compressed',
     'cbz': 'application/x-cbz',  # application/vnd.comicbook+zip
     'epub': 'application/epub+zip',
     'epub3': 'application/epub+zip',
     'fb2': 'text/fb2+xml',  # application/fb2
+    'fb3': 'text/fb3',
     'mobi': 'application/x-mobipocket-ebook',
     'txt': 'text/plain',
+    'rtf': 'application/rtf',
+    'doc': 'application/msword',
+    'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'chm': 'application/vnd.ms-htmlhelp',
 
     'pdb': 'application/vnd.palm',
     'prc': 'application/vnd.palm',
 
     'azw': 'application/vnd.amazon.ebook',
     'kf7': 'application/vnd.amazon.ebook',
-    'azw3': 'application/vnd.amazon.mobi8-ebook',
+    'azw3': 'application/vnd.amazon.mobi8-ebook',  # application/x-mobi8-ebook
     'kfx': 'application/vnd.amazon.mobi8-ebook',
     'azw8': 'application/vnd.amazon.mobi8-ebook',
 
@@ -39,9 +46,14 @@ ebook_only_mimetypes = {
 
     # Images
     'gif': 'image/gif',
+    'j2k': 'image/jp2',
+    'jp2': 'image/jp2',
     'jpg': 'image/jpeg',
     'jpeg': 'image/jpeg',
     'png': 'image/png',
+    'svg': 'image/svg+xml',
+    'tif': 'image/tiff',
+    'tiff': 'image/tiff',
     'webp': 'image/webp',
 
     # TODO more formats
