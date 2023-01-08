@@ -614,7 +614,7 @@ def main(argv=None):
         log.info('Using: bjoern')
         bjoern.run(opds_root, listen_address, listen_port)
     elif cheroot:
-        log.info('Using: cheroot')
+        log.info('Using: cheroot %s', cheroot.__version__)
         server = cheroot.wsgi.Server((listen_address, listen_port), opds_root)
         server.start()
     elif cherrypy:
