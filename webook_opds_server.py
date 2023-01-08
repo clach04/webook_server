@@ -39,6 +39,12 @@ except ImportError:
     bjoern = None
 
 try:
+    import cheroot
+    import cheroot.wsgi
+except ImportError:
+    cheroot = None
+
+try:
     import cherrypy
 except ImportError:
     cherrypy = None
@@ -607,6 +613,10 @@ def main(argv=None):
     elif bjoern:
         log.info('Using: bjoern')
         bjoern.run(opds_root, listen_address, listen_port)
+    elif cheroot:
+        log.info('Using: cheroot')
+        server = cheroot.wsgi.Server((listen_address, listen_port), opds_root)
+        server.start()
     elif cherrypy:
         log.info('Using: cherrypy')
         # tested with cherrypy-18.8.0 and cheroot-9.0.0
