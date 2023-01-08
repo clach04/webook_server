@@ -607,7 +607,7 @@ def main(argv=None):
     log.info('Serving from ebook_dir: %s', config['ebook_dir'])
 
     if werkzeug:
-        log.info('Using: werkzeug')
+        log.info('Using: werkzeug %s', werkzeug.__version__)
         #werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=True, use_reloader=True)
         werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=False, use_reloader=False)
     elif bjoern:
