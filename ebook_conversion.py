@@ -30,6 +30,7 @@ sys.executables_location = os.environ.get('CALIBRE_EXECUTABLES_PATH', '/usr/bin'
 
 try:
     if os.environ.get('USE_CALIBRE_EBOOK_CONVERT_EXE'):
+        log.info('USE_CALIBRE_EBOOK_CONVERT_EXE is set, only use EXE not library mode')
         raise ImportError
 
     import calibre
