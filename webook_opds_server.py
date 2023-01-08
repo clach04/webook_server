@@ -150,6 +150,11 @@ def current_timestamp_for_header():
     #return header_format_date_time(time.time())
 
 
+def xml_escape(in_str):
+	#return in_str
+	return in_str.replace('<', '&#60;').replace('>', '&#62;')  # works with koreader
+	#return in_str.replace('<', '&lt;').replace('>', '&gt;')  # untested
+
 def to_bytes(in_str):
     # could choose to only encode for Python 3+
     return in_str.encode('utf-8')
@@ -251,7 +256,7 @@ def opds_search(environ, start_response):
         <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
     </entry>
 '''.format(
-        title=escape(file_name, quote=True),
+        title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
         tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
         author_name_surname_first=metadata.author,
         mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
@@ -442,7 +447,7 @@ def opds_browse(environ, start_response):
           <id>{filename}</id>
           <link rel="subsection" href="{href_path}" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="{filename}"></link>
       </entry>
-'''.format(filename=filename, href_path=quote('/file/' + directory_path  + filename))))  # href need full path (/file/.....) not relative...
+'''.format(filename=xml_escape(filename), href_path=quote('/file/' + directory_path  + filename))))  # href need full path (/file/.....) not relative...
                 # FIXME TODO /file should be take from directory_path_split in case of /epub, etc.
                 #print(result[-1])
         else:
@@ -457,7 +462,7 @@ def opds_browse(environ, start_response):
         <author>
             <name>{author_name_surname_first}</name>
         </author>
-        <id>{filename}</id>
+        <id>{title}</id>
         <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{href_path}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
         <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{href_path}"/>
         <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
@@ -466,13 +471,12 @@ def opds_browse(environ, start_response):
     </entry>
 '''.format(
         author_name_surname_first=metadata.author,  #'lastname, firstname',
-        filename=filename,  # FIXME need full path for href?
         href_path=quote( directory_path  + filename),
         href_path_epub=quote('/epub/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
         href_path_mobi=quote('/mobi/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
-        title=metadata.title
+        title=xml_escape(metadata.title)
         )))
 
     result.append(to_bytes('''  </feed>
