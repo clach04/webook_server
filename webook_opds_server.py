@@ -197,7 +197,7 @@ def opds_search(environ, start_response):
 
       <!-- koreader does NOT need an icon -->
 
-      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+      <link rel="search" type="application/opensearchdescription+xml" title="webook Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
@@ -413,7 +413,7 @@ def opds_browse(environ, start_response):
 
       <!-- koreader does NOT need an icon -->
 
-      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+      <link rel="search" type="application/opensearchdescription+xml" title="webook Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
@@ -532,7 +532,7 @@ def opds_root(environ, start_response):
 
       <!-- koreader does NOT need an icon -->
 
-      <link rel="search" type="application/opensearchdescription+xml" title="Project Gutenberg Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>  <!-- TODO FIXME hard coded URL :-(  -->
+      <link rel="search" type="application/opensearchdescription+xml" title="webook Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>
     <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
     <opensearch:startIndex>1</opensearch:startIndex>
 
