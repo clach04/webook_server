@@ -606,7 +606,6 @@ def main(argv=None):
     log.info('using temporary directory temp_dir: %s', config['temp_dir'])
     log.info('Serving from ebook_dir: %s', config['ebook_dir'])
 
-    werkzeug=None
     if werkzeug:
         log.info('Using: werkzeug %s', werkzeug.__version__)
         #werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=True, use_reloader=True)
@@ -620,6 +619,7 @@ def main(argv=None):
         server.start()
     elif cherrypy:
         log.info('Using: cherrypy')
+        log.info('Using: cherrypy %s', cherrypy.__version__)
         # tested with cherrypy-18.8.0 and cheroot-9.0.0
         # Mount the application
         cherrypy.tree.graft(opds_root, "/")
