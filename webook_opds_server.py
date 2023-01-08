@@ -606,12 +606,13 @@ def main(argv=None):
     log.info('using temporary directory temp_dir: %s', config['temp_dir'])
     log.info('Serving from ebook_dir: %s', config['ebook_dir'])
 
+    werkzeug=None
     if werkzeug:
         log.info('Using: werkzeug %s', werkzeug.__version__)
         #werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=True, use_reloader=True)
         werkzeug.serving.run_simple(listen_address, listen_port, opds_root, use_debugger=False, use_reloader=False)
     elif bjoern:
-        log.info('Using: bjoern')
+        log.info('Using: bjoern %r', bjoern._bjoern.version)
         bjoern.run(opds_root, listen_address, listen_port)
     elif cheroot:
         log.info('Using: cheroot %s', cheroot.__version__)
