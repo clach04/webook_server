@@ -19,6 +19,15 @@ ebook_only_mimetypes = {
     'mobi': 'application/x-mobipocket-ebook',
     'txt': 'text/plain',
 
+    'pdb': 'application/vnd.palm',
+    'prc': 'application/vnd.palm',
+
+    'azw': 'application/vnd.amazon.ebook',
+    'kf7': 'application/vnd.amazon.ebook',
+    'azw3': 'application/vnd.amazon.mobi8-ebook',
+    'kfx': 'application/vnd.amazon.mobi8-ebook',
+    'azw8': 'application/vnd.amazon.mobi8-ebook',
+
     # UNTESTED
     'djv': 'image/vnd.djvu',
     'djvu': 'image/vnd.djvu',  # application/djvu image/x-djvu
