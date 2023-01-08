@@ -618,7 +618,6 @@ def main(argv=None):
         server = cheroot.wsgi.Server((listen_address, listen_port), opds_root)
         server.start()
     elif cherrypy:
-        log.info('Using: cherrypy')
         log.info('Using: cherrypy %s', cherrypy.__version__)
         # tested with cherrypy-18.8.0 and cheroot-9.0.0
         # Mount the application
