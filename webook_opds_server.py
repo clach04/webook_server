@@ -31,7 +31,7 @@ except ImportError:
 
 # TODO use a real XML library
 
-from wsgiref.simple_server import make_server
+import wsgiref.simple_server
 
 try:
     import bjoern
@@ -648,7 +648,7 @@ def main(argv=None):
         cherrypy.engine.block()
     else:
         log.info('Using: wsgiref.simple_server %s', wsgiref.simple_server.__version__)
-        httpd = make_server(listen_address, listen_port, opds_root)
+        httpd = wsgiref.simple_server.make_server(listen_address, listen_port, opds_root)
         httpd.serve_forever()
 
 
