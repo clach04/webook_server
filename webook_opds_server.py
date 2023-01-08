@@ -39,6 +39,11 @@ except ImportError:
     bjoern = None
 
 try:
+    import cherrypy
+except ImportError:
+    cherrypy = None
+
+try:
     import werkzeug
     import werkzeug.serving
 except ImportError:
@@ -602,6 +607,35 @@ def main(argv=None):
     elif bjoern:
         log.info('Using: bjoern')
         bjoern.run(opds_root, listen_address, listen_port)
+    elif cherrypy:
+        log.info('Using: cherrypy')
+        # tested with cherrypy-18.8.0 and cheroot-9.0.0
+        # Mount the application
+        cherrypy.tree.graft(opds_root, "/")
+
+        # Unsubscribe the default server
+        cherrypy.server.unsubscribe()
+
+        # Instantiate a new server object
+        server = cherrypy._cpserver.Server()
+
+        # Configure the server object
+        server.socket_host = listen_address
+        server.socket_port = listen_port
+        #server.thread_pool = 30
+
+        # For SSL Support
+        # server.ssl_module            = 'pyopenssl'
+        # server.ssl_certificate       = 'ssl/certificate.crt'
+        # server.ssl_private_key       = 'ssl/private.key'
+        # server.ssl_certificate_chain = 'ssl/bundle.crt'
+
+        # Subscribe this server
+        server.subscribe()
+
+        # Start the server engine (Option 1 *and* 2)
+        cherrypy.engine.start()
+        cherrypy.engine.block()
     else:
         log.info('Using: wsgiref.simple_server')
         httpd = make_server(listen_address, listen_port, opds_root)
