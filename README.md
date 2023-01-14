@@ -26,7 +26,7 @@ This is either:
 
 Basic ebook server that doesn't require a database.
 
-Given a directory of (possibly directories of) ebooks serve a web (http) interface of the files and automatically convert to the desired format (incomplete examples; mobi, epub, fb2, html, txt, rtf, etc.). The format is specified in the URL and browsing is supported. This works great with a web browser (including the Amazon Kindle Experimental Web Browser) and OPDS client like [KOReader](https://github.com/koreader/koreader).
+Given a directory of (possibly directories of) ebooks serve a web (http) interface of the files and automatically convert to the desired format (incomplete examples; mobi, epub, fb2, html, txt, rtf, etc.). The format is specified in the URL and browsing is supported. This works great with a web browser (including the Amazon Kindle Experimental Web Browser) and [OPDS](https://en.m.wikipedia.org/wiki/Open_Publication_Distribution_System) client like [KOReader](https://github.com/koreader/koreader).
 
 ### Features
 
