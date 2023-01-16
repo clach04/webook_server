@@ -8,30 +8,42 @@ All implementations rely on temp disk space and will spool to disk.
 
 import logging
 import os
+import shutil
 import sys
+import tempfile
 
 
 log = logging.getLogger(__name__)
 logging.basicConfig()  # TODO include timestamp - and maybe function name/line numbers in log
 log.setLevel(level=logging.DEBUG)  # Debug hack!
 
+try:
+    import KindleUnpack  # https://github.com/clach04/KindleUnpack
+    import KindleUnpack.lib.kindleunpack
 
-"""Boiler plate from /usr/bin/ebook-convert
-"""
+    unpack_book = KindleUnpack.lib.kindleunpack.unpackBook  # fake out a pep8 naming comvention
+    os.environ['USE_CALIBRE_EBOOK_CONVERT_EXE'] = 'true'  # skip calibre import?
+except ImportError:
+    unpack_book = None
 
-path = os.environ.get('CALIBRE_PYTHON_PATH', '/usr/lib/calibre')
-if path not in sys.path:
-    sys.path.insert(0, path)
 
-sys.resources_location = os.environ.get('CALIBRE_RESOURCES_PATH', '/usr/share/calibre')
-sys.extensions_location = os.environ.get('CALIBRE_EXTENSIONS_PATH', '/usr/lib/calibre/calibre/plugins')
-sys.executables_location = os.environ.get('CALIBRE_EXECUTABLES_PATH', '/usr/bin')
 
 
 try:
     if os.environ.get('USE_CALIBRE_EBOOK_CONVERT_EXE'):
         log.info('USE_CALIBRE_EBOOK_CONVERT_EXE is set, only use EXE not library mode')
         raise ImportError
+
+    """Boiler plate from /usr/bin/ebook-convert
+    """
+
+    path = os.environ.get('CALIBRE_PYTHON_PATH', '/usr/lib/calibre')
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+    sys.resources_location = os.environ.get('CALIBRE_RESOURCES_PATH', '/usr/share/calibre')
+    sys.extensions_location = os.environ.get('CALIBRE_EXTENSIONS_PATH', '/usr/lib/calibre/calibre/plugins')
+    sys.executables_location = os.environ.get('CALIBRE_EXECUTABLES_PATH', '/usr/bin')
 
     import calibre
     from calibre.ebooks.conversion.cli import main as calibre_ebook_convert
@@ -41,7 +53,33 @@ except ImportError:
 
 
 # Wrapper functions
-if calibre:
+if unpack_book:
+    # TODO source and destination conversion lookup/check support? E.g. only azw3 -> epub, mobi -> epub?
+    # TODO use best conversion tool, for format-pairing with calibre as fallback?
+    def convert_version():
+        return 'KindleUnpack_' + getattr(KindleUnpack, '__version__', '??')
+
+    def convert(original_filename, new_filename):
+        # Faster than calibre but limited to kindle (azw3) to epub
+        # TODO capture stdout/stderr? At the moment stdout/stderr is allowed to be emitted
+        # NOTE uses temp disk spacel can be controlled via TMPDIR, TEMP or TMP environment variables
+        log.info('KindleUnpack in-process conversion, see stdout/stderr for status')
+        log.debug('%r -> %r', original_filename, new_filename)
+        if not new_filename.lower().endswith('.epub'):  # TODO epub2 and epub3?
+            raise NotImplementedError('output format %r, only epub supported' % new_filename)
+
+        # should temp name include (basename of) original filename?
+        temp_directory = tempfile.mkdtemp(prefix='kindleunpack__')  # be nice to use Py 3.2 tempfile.TemporaryDirectory()
+        log.debug('temp_directory=%r', temp_directory)
+        try:
+            # TODO mutex due to global variable usage?
+            os.environ['KINDLE_UNPACK_EPUB_FILENAME'] = new_filename  # hack to specify output epub file name
+            # def unpackBook(infile, outdir, apnxfile=None, epubver='2', use_hd=False, dodump=False, dowriteraw=False, dosplitcombos=False):
+            unpack_book(original_filename, temp_directory)
+            # TODO catch ValueError for conversion issues
+        finally:
+            shutil.rmtree(temp_directory)
+elif calibre:
     def convert_version():
         return 'calibre_' + calibre.__version__
 
