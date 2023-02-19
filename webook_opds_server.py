@@ -186,7 +186,7 @@ def filename_sanitize(filename):
     return filename
 
 def filename_rfc6266(filename):
-    pass  # PASS
+    return quote(filename)
 
 def not_found(environ, start_response):
     """serves 404s."""
@@ -426,7 +426,7 @@ def opds_browse(environ, start_response):
         content_type = guess_mimetype(result_ebook_filename)
         headers = [
                                 ('Content-type', content_type),
-                                ('Content-Disposition', 'attachment; filename="%s"' % filename_sanitize(result_ebook_filename)),  # FIXME TODO rfc-6266
+                                ('Content-Disposition', 'attachment; filename="%s"; filename*=utf-8\'\'%s' % (filename_sanitize(result_ebook_filename), filename_rfc6266(result_ebook_filename))),  # FIXME TODO rfc-6266
                             ]
         headers.append(('Last-Modified', current_timestamp_for_header()))  # TODO headers, date could be from filesystem
         start_response(status, headers)
