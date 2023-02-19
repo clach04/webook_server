@@ -9,6 +9,7 @@
     + [Python install dependencies](#python-install-dependencies)
     + [Run](#run)
     + [Sample Run](#sample-run)
+  * [systemd webook service](#systemd-webook-service)
   * [Notes and config](#notes-and-config)
     + [json config file](#json-config-file)
     + [Operating System Environment Variables](#operating-system-environment-variables)
@@ -118,6 +119,45 @@ if setting tmp dir, mkdir -p /tmp/ebookserver/....
       * http://127.0.0.1:8080/mobi/test_book_fb2.fb2 which will convert a FictionBook to Mobi format
       * http://127.0.0.1:8080/epub/test_book_fb2.fb2 which will convert a FictionBook to epub format (same book as above)
       * http://127.0.0.1:8080/file/test_book_fb2.fb2 and http://127.0.0.1:8080/fb2/test_book_fb2.fb2 which will download without conversion
+
+## systemd webook service
+
+Systemd service (e.g. for Raspbian).
+
+For more information see:
+
+  * https://www.raspberrypi.org/documentation/linux/usage/systemd.md
+  * https://coreos.com/os/docs/latest/using-environment-variables-in-systemd-units.html
+
+NOTE directory name for `ExecStart` and `WorkingDirectory` in `webook.service`.
+
+Install
+
+    cd scripts
+    # Potententially edit service; ExecStart, WorkingDirectory, User
+    # Rewview config file
+    sudo cp webook.service /etc/systemd/system/webook.service
+    sudo chmod 644 /etc/systemd/system/webook.service
+    sudo systemctl enable webook.service
+
+Usage
+
+    sudo systemctl stop webook.service
+    sudo systemctl start webook.service
+    sudo systemctl restart webook.service
+    sudo systemctl status webook.service  # status and recent logs
+    sudo systemctl status webook.service -n 100  # show last 100 log entries
+    journalctl  -u webook.service  # show all logs
+
+    sudo systemctl status webook_https.service -n 100
+
+
+    systemctl list-unit-files --state=enabled | grep webook
+
+NOTE if changing service files, e.g. adding `Environment`, restart config (not just specific service):
+
+    sudo systemctl daemon-reload
+    sudo systemctl restart webook.service
 
 ## Notes and config
 
