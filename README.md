@@ -148,9 +148,6 @@ Usage
     sudo systemctl status webook.service -n 100  # show last 100 log entries
     journalctl  -u webook.service  # show all logs
 
-    sudo systemctl status webook_https.service -n 100
-
-
     systemctl list-unit-files --state=enabled | grep webook
 
 NOTE if changing service files, e.g. adding `Environment`, restart config (not just specific service):
