@@ -1,0 +1,16 @@
+[Unit]
+Description=webook_opds service
+After=network.target
+
+[Service]
+#EnvironmentFile=-/home/pi/code/py/bb_pysnippets/env.sh
+# NOTE ExecStart call assumes config.json in WorkingDirectory
+ExecStart=/home/pi/code/py/bb_pysnippets/webook_opds_server.py config.json
+WorkingDirectory=/home/pi/code/py/bb_pysnippets
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
