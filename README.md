@@ -133,10 +133,9 @@ NOTE directory name for `ExecStart` and `WorkingDirectory` in `webook.service`.
 
 Install
 
-    cd scripts
     # Potententially edit service; ExecStart, WorkingDirectory, User
     # Rewview config file
-    sudo cp webook.service /etc/systemd/system/webook.service
+    sudo cp scripts/webook.service /etc/systemd/system/webook.service
     sudo chmod 644 /etc/systemd/system/webook.service
     sudo systemctl enable webook.service
 
