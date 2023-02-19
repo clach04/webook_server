@@ -171,6 +171,22 @@ def to_bytes(in_str):
     # could choose to only encode for Python 3+
     return in_str.encode('utf-8')
 
+def filename_sanitize(filename):
+    # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+    # https://datatracker.ietf.org/doc/html/rfc5987
+    # apparently latin1 (iso-8859-1) is fine, be more strict and restrict to 7-bit ascii
+    # limited attempt to restrict to alpha-numeric
+    filename = filename.replace(':', '')
+    filename = filename.replace(';', '')
+    filename = filename.replace('&', '')
+    filename = filename.replace('"', '')
+    filename = filename.replace("'", '')
+    filename = filename.encode('us-ascii', errors='ignore')  # remove non-ascii
+    filename = filename.decode('us-ascii')
+    return filename
+
+def filename_rfc6266(filename):
+    pass  # PASS
 
 def not_found(environ, start_response):
     """serves 404s."""
@@ -410,7 +426,7 @@ def opds_browse(environ, start_response):
         content_type = guess_mimetype(result_ebook_filename)
         headers = [
                                 ('Content-type', content_type),
-                                ('Content-Disposition', 'attachment; filename=%s' % result_ebook_filename),  # FIXME TODO presumbly result_ebook_filename needs some sort of escaping here....?
+                                ('Content-Disposition', 'attachment; filename="%s"' % filename_sanitize(result_ebook_filename)),  # FIXME TODO rfc-6266
                             ]
         headers.append(('Last-Modified', current_timestamp_for_header()))  # TODO headers, date could be from filesystem
         start_response(status, headers)
