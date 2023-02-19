@@ -63,6 +63,18 @@ logging.basicConfig()
 log.setLevel(level=logging.DEBUG)
 
 
+def safe_mkdir(newdir):
+    """Create directory path(s) ignoring "already exists" errors, essentially `mkdir -p`"""
+    result_dir = os.path.abspath(newdir)
+    try:
+        os.makedirs(result_dir)
+    except OSError as info:
+        if info.errno == 17 and os.path.isdir(result_dir):
+            pass
+        else:
+            raise
+
+
 def determine_local_ipaddr():
     local_address = None
 
@@ -583,6 +595,8 @@ def main(argv=None):
     log.info('Starting server: http://%s:%d', local_ip, listen_port)
     log.info('using temporary directory temp_dir: %s', config['temp_dir'])
     log.info('Serving from ebook_dir: %s', config['ebook_dir'])
+
+    safe_mkdir(config['temp_dir'])  # if not done, silent errors can occur from tools like Calibre
 
     if werkzeug:
         log.info('Using: werkzeug %s', werkzeug.__version__)
