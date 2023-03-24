@@ -241,6 +241,7 @@ def opds_search(environ, start_response):
     directory_path = config['ebook_dir']
     directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
     join = os.path.join  # for performance, rather than reduced typing
+    file_counter = 0
     log.info('searching file system')
     #log.debug('directory_path %r', directory_path)
     #log.debug('directory_path_len %r', directory_path_len)
@@ -251,6 +252,7 @@ def opds_search(environ, start_response):
             tmp_path = join(root, dir_name)
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
+                file_counter += 1
                 # FIXME escaping missing - template and/or xml API usage
                 result.append(to_bytes('''
       <entry>
@@ -302,6 +304,13 @@ def opds_search(environ, start_response):
                 ('Pragma', 'no-cache'),
                 ('Last-Modified', current_timestamp_for_header()),
                 ]
+
+    if file_counter == 0:
+        result.append(to_bytes('''
+    <entry>
+        <title>No records found.</title>
+    </entry>
+'''))
 
     result.append(to_bytes('''  </feed>
 '''))
