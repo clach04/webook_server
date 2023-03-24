@@ -143,8 +143,8 @@ def any_path(url_path):
         directory_path = config['ebook_dir']
     log.info('directory_path %s', directory_path)
     if os.path.isfile(directory_path):
-        # determine existing format (using ONLY filename extension, potentiall could use content)
-        existing_ebook_format = os.path.splitext(directory_path)[0].lower()
+        # determine existing format (using ONLY filename extension, potentially could use content and file magic)
+        existing_ebook_format = os.path.splitext(directory_path)[0].lower()  # TODO is this correct? should this be -1?
         do_conversion = True
         if existing_ebook_format == ebook_format or ebook_format in ('file'):
             do_conversion = False
