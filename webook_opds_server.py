@@ -524,8 +524,8 @@ def opds_browse(environ, start_response):
     else:
         os_path = config['ebook_dir']
         directory_path = ''
-    log.info('directory_path %s', directory_path)
-    log.info('os_path %s', os_path)
+    log.info('directory_path %s', directory_path)  # requested URL path
+    log.info('os_path %s', os_path)  # actual path on disk
 
     if os.path.isfile(os_path):
         log.info('serve file')
@@ -580,7 +580,50 @@ def opds_browse(environ, start_response):
         return f
 
     log.info('browsing directory')
+    """client sniffing/determination
+    OPDS client
+        HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
 
+    Web Browser
+        HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
+        HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+    """
+    client_http_accept = environ.get('HTTP_ACCEPT', '')
+    client_http_user_agent = environ.get('HTTP_USER_AGENT', '')
+    if 'html' in client_http_accept:
+        client_type = CLIENT_BROWSER
+    else:
+        client_type = CLIENT_OPDS
+
+    if client_type == CLIENT_BROWSER:
+        # FIXME TODO if missing trailing '/' end up with parent directory...
+        log.debug('browse os_path %r', os_path)
+        log.info('browse %s', directory_path)
+        # format vaugely like Apache and Nginx file browse / auto-index mode
+        # TODO use a template
+        HTML_HEADER = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
+        HTML_FOOTER = "</pre><hr></body></html>"
+        path_title = environ['PATH_INFO']
+        html = HTML_HEADER.format(path_title=path_title)
+        files = os.listdir(os_path)
+        for filename in files:
+            file_path = os_path+'/'+filename
+            size = str(os.path.getsize(file_path))
+            date = os.path.getmtime(file_path)
+            date = time.gmtime(date)
+            date = time.strftime('%d-%b-%Y %H:%M',date)  # match Apache/Nginix date format (todo option for ISO)
+            spaces1 = ' '*(50-len(filename))
+            spaces2 = ' '*(20-len(size))
+            # FIXME cgi escape needed!
+            if os.path.isdir(file_path): html += '<a href="' + escape(filename) + '/">' + escape(filename) + '/</a>'+spaces1+date+spaces2+'   -\n'
+            else: html += '<a href="' + escape(filename) + '">' + escape(filename) + '</a>'+spaces1+' '+date+spaces2+size+'\n'
+        html += HTML_FOOTER
+        headers = [('Content-Type', 'text/html'), ('Content-Length', str(len(html)))]
+        headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache - koreader will show old directory info
+        start_response(status, headers)
+        return [to_bytes(html)]
+
+    # else client_type == CLIENT_OPDS
     result.append(to_bytes('''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
       <title>Catalog in /</title>
