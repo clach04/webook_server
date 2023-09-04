@@ -58,6 +58,8 @@ except ImportError:
 import ebook_conversion
 from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, load_config
 
+is_py3 = sys.version_info >= (3,)
+
 log = logging.getLogger(__name__)
 logging.basicConfig()
 log.setLevel(level=logging.DEBUG)
@@ -562,11 +564,16 @@ def opds_browse(environ, start_response):
         except IOError:
             return not_found(environ, start_response)  # FIXME return a better error for internal server error
         content_type = guess_mimetype(result_ebook_filename)
+        content_disposition = 'attachment; filename="%s"; filename*=utf-8\'\'%s' % (filename_sanitize(result_ebook_filename), filename_rfc6266(result_ebook_filename))  # FIXME TODO rfc-6266
+        if not is_py3:
+            # if py2 - avoid wsgiref AssertionError: Header values must be strings
+            content_disposition = content_disposition.encode('utf-8')  # TODO use to_bytes() instead without if check?
         headers = [
                                 ('Content-type', content_type),
-                                ('Content-Disposition', 'attachment; filename="%s"; filename*=utf-8\'\'%s' % (filename_sanitize(result_ebook_filename), filename_rfc6266(result_ebook_filename))),  # FIXME TODO rfc-6266
+                                ('Content-Disposition', content_disposition),
                             ]
         headers.append(('Last-Modified', current_timestamp_for_header()))  # TODO headers, date could be from filesystem
+        #log.debug('headers %r', headers)
         start_response(status, headers)
         return f
 
