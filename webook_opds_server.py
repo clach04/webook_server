@@ -542,6 +542,11 @@ def opds_browse(environ, start_response):
 
 
 def opds_root(environ, start_response):
+    """Handles/serves
+
+        /
+        i.e. the root, and also handles routing
+    """
     log.info('opds_root')
     if not config.get('self_url_path'):
         raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
