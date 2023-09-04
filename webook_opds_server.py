@@ -222,6 +222,7 @@ def browser_search(environ, start_response):
     else:
         get_dict = {}
     search_term = get_dict.get('q')  # same as most search engines
+    search_term = search_term[0]  # the first one
     #print('get_dict=%r'% get_dict)
     log.info('search search_term %s', search_term)
 
@@ -251,9 +252,69 @@ def browser_search(environ, start_response):
         headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache
 
         start_response(status, headers)
-        return result
+        #return result
+        yield result[0]
+        return
         #return render_template('search.html')  # TODO
-    raise NotImplementedError()
+    #raise NotImplementedError()
+
+    # actually do search
+    headers = [
+                ('Content-Type', 'text/html'),  # "application/atom+xml; charset=UTF-8"
+                ('Cache-Control', 'no-cache, must-revalidate'),
+                ('Pragma', 'no-cache'),
+                ('Last-Modified', current_timestamp_for_header()),
+            ]
+    start_response(status, headers)
+
+    # TODO regex?
+    search_term = search_term.lower()  # for now single search term, case insensitive compare
+    directory_path = config['ebook_dir']
+    directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
+    join = os.path.join  # for performance, rather than reduced typing
+
+    log.debug('yield head')
+    yield to_bytes('''<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>webook results {search_term}</title>
+    </head>
+    <body>
+        <h1>webook results {search_term}</h1>
+
+        <pre>
+<a href="../">../</a>
+'''.format(search_term=escape(search_term))
+    )
+
+    search_hit_template = '''<a href="/file/{url}">{url}</a>'''
+
+    log.debug('pre for')
+    #results = []  # TODO yield results?
+    for root, dirs, files in os.walk(directory_path):
+        for dir_name in dirs:
+            tmp_path = join(root, dir_name)
+            tmp_path_sans_prefix = tmp_path[directory_path_len:]
+            if search_term in tmp_path_sans_prefix.lower():
+                #results.append(tmp_path_sans_prefix + '/')  # when appended add trailing slash for directories, avoid Flask oddness
+                url = tmp_path_sans_prefix + '/'  # make clear a dir with trailing slash
+                yield to_bytes(search_hit_template.format(url=escape(url)))
+        for file_name in files:
+            tmp_path = join(root, file_name)
+            tmp_path_sans_prefix = tmp_path[directory_path_len:]
+            if search_term in tmp_path_sans_prefix.lower():
+                #results.append(tmp_path_sans_prefix)
+                # TODO include file size?
+                url = tmp_path_sans_prefix
+                yield to_bytes(search_hit_template.format(url=escape(url)))
+
+    yield to_bytes('''
+        </pre>
+    </body>
+</html>
+''')
+
+    #return render_template('search_results.html', search_term=search_term, urls=results, ebook_format='file')  # TODO
 
 
 def opds_search(environ, start_response):
