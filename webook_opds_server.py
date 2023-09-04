@@ -606,7 +606,7 @@ def opds_browse(environ, start_response):
         path_title = environ['PATH_INFO']
         html = HTML_HEADER.format(path_title=path_title)
         files = os.listdir(os_path)
-        for filename in files:
+        for filename in files:  # TODO duplicated code, see OPDS loop below
             file_path = os_path+'/'+filename
             size = str(os.path.getsize(file_path))
             date = os.path.getmtime(file_path)
@@ -647,7 +647,7 @@ def opds_browse(environ, start_response):
             ))
 
     files = os.listdir(os_path)
-    for filename in files:
+    for filename in files:  # TODO duplicated code, see browser loop code above
         file_path = os.path.join(os_path, filename)
         """
         size = str(os.path.getsize(file_path))
