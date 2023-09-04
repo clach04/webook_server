@@ -207,10 +207,61 @@ global config
 config = {}
 
 
+def browser_search(environ, start_response):
+    """Handles/serves
+
+        /search
+
+    Similar to opds_search()
+    TODO GET and POST support
+    """
+    log.info('opds_search')
+    # Returns a dictionary in which the values are lists
+    if environ.get('QUERY_STRING'):
+        get_dict = parse_qs(environ['QUERY_STRING'])
+    else:
+        get_dict = {}
+    search_term = get_dict.get('q')  # same as most search engines
+    #print('get_dict=%r'% get_dict)
+    log.info('search search_term %s', search_term)
+
+    status = '200 OK'
+    headers = [('Content-Type', 'text/html')]
+    result = []
+
+
+    if not search_term:
+        result.append(to_bytes('''<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>webook search</title>
+    </head>
+    <body>
+        <h1>webook search</h1>
+
+        <form action="/search" method="GET">
+          search term : <input type="text" name="q"><br>
+          <input type="submit" value="submit">
+        </form>
+    </body>
+</html>
+
+'''))  # TODO replace with template
+        headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
+        headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache
+
+        start_response(status, headers)
+        return result
+        #return render_template('search.html')  # TODO
+    raise NotImplementedError()
+
+
 def opds_search(environ, start_response):
     """Handles/serves
 
         /opds/search
+
+    Similar to browser_search()
     """
     log.info('opds_search')
     # Returns a dictionary in which the values are lists
@@ -569,6 +620,8 @@ def opds_root(environ, start_response):
         return opds_search_meta(environ, start_response)
     if path_info.startswith('/opds/search'):
         return opds_search(environ, start_response)
+    if path_info.startswith('/search'):
+        return browser_search(environ, start_response)
     if path_info.startswith('/file'):
         return opds_browse(environ, start_response)
     if path_info.startswith('/epub'):
