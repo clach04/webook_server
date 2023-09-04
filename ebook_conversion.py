@@ -100,14 +100,17 @@ else:
     # NOTE no double quotes, even though there are spaces in the path
     log.debug('ebook_convert_exe %r', ebook_convert_exe)
 
-    process = subprocess.Popen([ebook_convert_exe, '--version'], stdout=subprocess.PIPE)  # call ebook-convert as a subprocess
-    process.wait()  # wait until it finishes it work
-    ebook_convert_exe_version_stdout, ebook_convert_exe_version_stderr = process.communicate()
-    log.debug('ebook_convert_exe_version_stderr %r', ebook_convert_exe_version_stderr)
-    log.debug('ebook_convert_exe_version_stdout %r', ebook_convert_exe_version_stdout)
-    ebook_convert_exe_version_stdout = ebook_convert_exe_version_stdout.decode('utf-8')
-    log.debug('ebook_convert_exe_version_stdout %r', ebook_convert_exe_version_stdout)
-    calibre__version__ = ebook_convert_exe_version_stdout.split(')', 1)[0].rsplit(' ', 1)[1]
+    try:
+        process = subprocess.Popen([ebook_convert_exe, '--version'], stdout=subprocess.PIPE)  # call ebook-convert as a subprocess
+        process.wait()  # wait until it finishes it work
+        ebook_convert_exe_version_stdout, ebook_convert_exe_version_stderr = process.communicate()
+        log.debug('ebook_convert_exe_version_stderr %r', ebook_convert_exe_version_stderr)
+        log.debug('ebook_convert_exe_version_stdout %r', ebook_convert_exe_version_stdout)
+        ebook_convert_exe_version_stdout = ebook_convert_exe_version_stdout.decode('utf-8')
+        log.debug('ebook_convert_exe_version_stdout %r', ebook_convert_exe_version_stdout)
+        calibre__version__ = ebook_convert_exe_version_stdout.split(')', 1)[0].rsplit(' ', 1)[1]
+    except:  # WindowsError: [Error 2] The system cannot find the file specified
+        pass  # retain calibre__version__
 
     def convert_version():
         return 'calibre-ebook-convert_' + calibre__version__
