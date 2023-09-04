@@ -8,5 +8,6 @@
     },
     "#ebook_dir": "C:\\windows\\directory\\example\\note_double_slash_in_json",
     "#ebook_dir": "/linux/example/books",
+    "#NOTE": "self_url_path is REQUIRED for OPDS server, alternatively set OS env WEBOOK_SELF_URL_PATH instead",
     "#self_url_path": "http://123.45.67.89_or_hostname:8080"
 }
