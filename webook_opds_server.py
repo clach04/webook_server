@@ -208,6 +208,10 @@ config = {}
 
 
 def opds_search(environ, start_response):
+    """Handles/serves
+
+        /opds/search
+    """
     log.info('opds_search')
     # Returns a dictionary in which the values are lists
     if environ.get('QUERY_STRING'):
@@ -318,6 +322,10 @@ def opds_search(environ, start_response):
     return result
 
 def opds_search_meta(environ, start_response):
+    """Handles/serves
+
+        /search-metadata.xml
+    """
     log.info('opds_search_meta')
     status = '200 OK'
     headers = [('Content-type', 'application/xml')]
@@ -361,6 +369,15 @@ def opds_search_meta(environ, start_response):
 
 
 def opds_browse(environ, start_response):
+    """Handles/serves
+
+        /file
+        /epub
+        /fb2
+        /fb2.zip
+        /mobi
+        /txt
+    """
     log.info('opds_browse')
     status = '200 OK'
     headers = [('Content-type', 'application/atom+xml;profile=opds-catalog;kind=acquisition')]
