@@ -540,6 +540,8 @@ def opds_browse(environ, start_response):
     start_response(status, headers)
     return result
 
+CLIENT_OPDS = 'OPDS'
+CLIENT_BROWSER = 'browser'
 
 def opds_root(environ, start_response):
     """Handles/serves
@@ -554,6 +556,7 @@ def opds_root(environ, start_response):
     status = '200 OK'
     headers = [('Content-type', 'application/atom+xml;profile=opds-catalog;kind=acquisition')]
     result = []
+    client_type = CLIENT_OPDS
 
     if environ['SERVER_PROTOCOL'] == 'HTTP/1.0':
         log.error('SERVER_PROTOCOL is too old, koreader needs ast least "HTTP/1.1"')
@@ -582,7 +585,21 @@ def opds_root(environ, start_response):
         log.info('Returning ERROR 404 %r', path_info)
         return not_found(environ, start_response)
 
-    result.append(to_bytes(
+    """client sniffing/determination
+    OPDS client
+        HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
+
+    Web Browser
+        HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
+        HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+    """
+    client_http_accept = environ.get('HTTP_ACCEPT', '')
+    client_http_user_agent = environ.get('HTTP_USER_AGENT', '')
+    if 'html' in client_http_accept:
+        client_type = CLIENT_BROWSER
+
+    if client_type == CLIENT_OPDS:
+        result.append(to_bytes(
 '''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
       <title>Catalog in /</title>
@@ -607,6 +624,14 @@ def opds_root(environ, start_response):
   </feed>
 '''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])
             ))
+    elif client_type == CLIENT_BROWSER:
+        headers = [('Content-Type', 'text/html')]
+        result.append(to_bytes('''<a href="mobi/">mobi/</a><br>
+<a href="epub/">epub/</a><br>
+<a href="file/">file/</a><br>
+<br>
+<a href="search">search</a>
+'''))# TODO loop through ebook_only_mimetypes and list links
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
     headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache
