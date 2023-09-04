@@ -46,8 +46,8 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
 
 The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
 
-  * webook_server.py is for web browsers (e.g. the Kindle web browser)
-  * webook_opds_server.py is for OPDS clients like:
+  * webook_server.py (deprecated) is ONLY for web browsers (e.g. the Kindle web browser)
+  * webook_opds_server.py (sinec #21) is for both web browsers (e.g. the Kindle web browser) and OPDS clients like:
       * https://github.com/koreader/koreader
       * http://alreader.kms.ru/
       * https://fbreader.org/
