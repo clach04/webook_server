@@ -224,7 +224,9 @@ def browser_search(environ, start_response):
     else:
         get_dict = {}
     search_term = get_dict.get('q')  # same as most search engines
-    search_term = search_term[0]  # the first one
+    log.info('search search_term %s', search_term)
+    if search_term:
+        search_term = search_term[0]  # the first one
     #print('get_dict=%r'% get_dict)
     log.info('search search_term %s', search_term)
 
