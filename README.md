@@ -47,7 +47,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
 The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
 
   * webook_server.py (deprecated) is ONLY for web browsers (e.g. the Kindle web browser)
-  * webook_opds_server.py (sinec #21) is for both web browsers (e.g. the Kindle web browser) and OPDS clients like:
+  * webook_opds_server.py (since #21) is for both web browsers (e.g. the Kindle web browser) and OPDS clients like:
       * https://github.com/koreader/koreader
       * http://alreader.kms.ru/
       * https://fbreader.org/
@@ -134,7 +134,7 @@ NOTE directory name for `ExecStart` and `WorkingDirectory` in `webook.service`.
 Install
 
     # Potententially edit service; ExecStart, WorkingDirectory, User
-    # Rewview config file
+    # Review config file
     sudo cp scripts/webook.service /etc/systemd/system/webook.service
     sudo chmod 644 /etc/systemd/system/webook.service
     sudo systemctl enable webook.service
@@ -248,3 +248,4 @@ Using the OS packages for Python, Flask, and Calibre.
   * Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
       * Flask 1.1.2
       * calibre ebook-convert exe version 4.2.0
+
