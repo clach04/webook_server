@@ -260,6 +260,14 @@ def browser_recent(environ, start_response):
                     ('Pragma', 'no-cache'),
                     ('Last-Modified', current_timestamp_for_header()),
                 ]
+    else:  # CLIENT_OPDS
+        headers = [
+                    ('Content-type', 'application/xml'),  # "application/atom+xml; charset=UTF-8"
+                    ('Cache-Control', 'no-cache, must-revalidate'),
+                    ('Pragma', 'no-cache'),
+                    ('Last-Modified', current_timestamp_for_header()),
+                    ]
+
     start_response(status, headers)
 
     number_of_files = 50
@@ -281,6 +289,22 @@ def browser_recent(environ, start_response):
 '''.format(search_term=escape(search_term))
     )
         search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
+    else:  # CLIENT_OPDS
+        yield to_bytes(
+        '''<?xml version="1.0" encoding="UTF-8"?>
+          <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
+              <title>Recently added</title>
+              <id>/</id>
+              <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
+              <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
+
+              <!-- koreader does NOT need an icon -->
+
+              <link rel="search" type="application/opensearchdescription+xml" title="webook Catalog Search" href="{WEBOOK_SELF_URL_PATH}/search-metadata.xml"/>
+            <opensearch:itemsPerPage>25</opensearch:itemsPerPage>
+            <opensearch:startIndex>1</opensearch:startIndex>
+
+        '''.format(WEBOOK_SELF_URL_PATH=config['self_url_path']))
 
     log.debug('pre recent search')
     # find all recent files before returning any results
@@ -296,12 +320,48 @@ def browser_recent(environ, start_response):
         url = tmp_path_sans_prefix
         if client_type == CLIENT_BROWSER:
             yield to_bytes(search_hit_template.format(url=escape(url)))
+        else:  # CLIENT_OPDS
+            metadata = BootMeta(tmp_path_sans_prefix)
+            # TODO include file size?
+            # TODO try and guess title and author name
+            # TODO is there a way to get "book information" link to work?
+            yield to_bytes('''
+    <entry>
+        <title>{title}</title>
+        <author>
+            <name>{author_name_surname_first}</name>
+        </author>
+        <id>{tmp_path_sans_prefix}</id>
+        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{tmp_path_sans_prefix}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
+        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{tmp_path_sans_prefix}"/>
+        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{tmp_path_sans_prefix}"/>
+        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
+    </entry>
+'''.format(
+        title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
+        tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
+        author_name_surname_first=metadata.author,
+        mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
+        # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
+        ))
+
+
+    if not recent_file_list:
+        if client_type == CLIENT_OPDS:
+            yield to_bytes('''
+    <entry>
+        <title>No records found.</title>
+    </entry>
+''')
 
     if client_type == CLIENT_BROWSER:
         yield to_bytes('''
         </pre>
     </body>
 </html>
+''')
+    else:  # CLIENT_OPDS
+        yield to_bytes('''  </feed>
 ''')
 
 def browser_search(environ, start_response):
