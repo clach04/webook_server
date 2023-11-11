@@ -56,7 +56,7 @@ except ImportError:
     werkzeug = None
 
 import ebook_conversion
-from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, find_recent_files, load_config
+from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, find_recent_files, load_config, ORDER_DESCENDING
 
 is_py3 = sys.version_info >= (3,)
 
@@ -232,6 +232,7 @@ def browser_recent(environ, start_response):
     start_response(status, headers)
 
     number_of_files = 50
+    sort_order = ORDER_DESCENDING
     search_term = 'RECENT %d' % number_of_files
 
     log.debug('yield head')
@@ -254,7 +255,7 @@ def browser_recent(environ, start_response):
     # find all recent files before returning any results
     directory_path = config['ebook_dir']
     directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
-    recent_file_list = find_recent_files(directory_path, number_of_files=number_of_files)
+    recent_file_list = find_recent_files(directory_path, number_of_files=number_of_files, order=sort_order)
 
     log.debug('pre recent for loop')
     for file_name in recent_file_list:
