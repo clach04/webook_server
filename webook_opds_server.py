@@ -204,6 +204,29 @@ def not_found(environ, start_response):
 </body></html>''')]
 
 
+CLIENT_OPDS = 'OPDS'
+CLIENT_BROWSER = 'browser'
+
+def determine_client(environ):
+    """heuristic for determining if we have an OPDS client or a web browser
+    """
+    log.info('browsing directory')
+    """client sniffing/determination
+    OPDS client
+        HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
+
+    Web Browser
+        HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
+        HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+    """
+    client_http_accept = environ.get('HTTP_ACCEPT', '')
+    #client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
+    if 'html' in client_http_accept:
+        client_type = CLIENT_BROWSER
+    else:
+        client_type = CLIENT_OPDS
+    return client_type
+
 # NOTE global config - see webook_core.load_config()
 global config
 config = {}
@@ -376,7 +399,7 @@ def opds_search(environ, start_response):
 
         /opds/search
 
-    Similar to browser_search()
+    For OPDS clients. Similar to browser_search()
     """
     log.info('opds_search')
     # Returns a dictionary in which the values are lists
@@ -632,20 +655,7 @@ def opds_browse(environ, start_response):
         return f
 
     log.info('browsing directory')
-    """client sniffing/determination
-    OPDS client
-        HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
-
-    Web Browser
-        HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
-        HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
-    """
-    client_http_accept = environ.get('HTTP_ACCEPT', '')
-    client_http_user_agent = environ.get('HTTP_USER_AGENT', '')
-    if 'html' in client_http_accept:
-        client_type = CLIENT_BROWSER
-    else:
-        client_type = CLIENT_OPDS
+    client_type = determine_client(environ)
 
     if client_type == CLIENT_BROWSER:
         # FIXME TODO if missing trailing '/' end up with parent directory...
@@ -756,8 +766,6 @@ def opds_browse(environ, start_response):
     start_response(status, headers)
     return result
 
-CLIENT_OPDS = 'OPDS'
-CLIENT_BROWSER = 'browser'
 
 def opds_root(environ, start_response):
     """Handles/serves
@@ -807,18 +815,7 @@ def opds_root(environ, start_response):
         log.info('Returning ERROR 404 %r', path_info)
         return not_found(environ, start_response)
 
-    """client sniffing/determination
-    OPDS client
-        HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
-
-    Web Browser
-        HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
-        HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
-    """
-    client_http_accept = environ.get('HTTP_ACCEPT', '')
-    client_http_user_agent = environ.get('HTTP_USER_AGENT', '')
-    if 'html' in client_http_accept:
-        client_type = CLIENT_BROWSER
+    client_type = determine_client(environ)
 
     if client_type == CLIENT_OPDS:
         result.append(to_bytes(
