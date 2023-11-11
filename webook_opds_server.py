@@ -908,7 +908,13 @@ def opds_root(environ, start_response):
           <link rel="subsection" href="/file/" type="application/atom+xml;profile=opds-catalog;kind=acquisition" title="BROWSE"></link>
       </entry>
 
-      <!-- TODO add search recent support -->
+    <entry>
+      <title>Recently added</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent"/>
+      <updated>2023-08-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent</id>
+      <content type="text">Find the latest books available</content>
+    </entry>
 
   </feed>
 '''.format(WEBOOK_SELF_URL_PATH=config['self_url_path'])
