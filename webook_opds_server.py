@@ -210,7 +210,7 @@ CLIENT_BROWSER = 'browser'
 def determine_client(environ):
     """heuristic for determining if we have an OPDS client or a web browser
     """
-    log.info('browsing directory')
+    log.info('determine client type')
     """client sniffing/determination
     OPDS client
         HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
@@ -220,6 +220,7 @@ def determine_client(environ):
         HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
     """
     client_http_accept = environ.get('HTTP_ACCEPT', '')
+    log.debug('HTTP_USER_AGENT %r', client_http_accept)
     #client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
     if 'html' in client_http_accept:
         client_type = CLIENT_BROWSER
@@ -244,14 +245,15 @@ def browser_recent(environ, start_response):
     """
     log.info('browser_recent')
     status = '200 OK'
-    headers = [('Content-Type', 'text/html')]
 
-    headers = [
-                ('Content-Type', 'text/html'),  # "application/atom+xml; charset=UTF-8"
-                ('Cache-Control', 'no-cache, must-revalidate'),
-                ('Pragma', 'no-cache'),
-                ('Last-Modified', current_timestamp_for_header()),
-            ]
+    client_type = determine_client(environ)
+    if client_type == CLIENT_BROWSER:
+        headers = [
+                    ('Content-Type', 'text/html'),  # "application/atom+xml; charset=UTF-8"
+                    ('Cache-Control', 'no-cache, must-revalidate'),
+                    ('Pragma', 'no-cache'),
+                    ('Last-Modified', current_timestamp_for_header()),
+                ]
     start_response(status, headers)
 
     number_of_files = 50
@@ -259,7 +261,8 @@ def browser_recent(environ, start_response):
     search_term = 'RECENT %d' % number_of_files
 
     log.debug('yield head')
-    yield to_bytes('''<html>
+    if client_type == CLIENT_BROWSER:
+        yield to_bytes('''<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>webook results {search_term}</title>
@@ -271,8 +274,7 @@ def browser_recent(environ, start_response):
 <a href="../">../</a>
 '''.format(search_term=escape(search_term))
     )
-
-    search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
+        search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
 
     log.debug('pre recent search')
     # find all recent files before returning any results
@@ -286,9 +288,11 @@ def browser_recent(environ, start_response):
         #results.append(tmp_path_sans_prefix)
         # TODO include file size?
         url = tmp_path_sans_prefix
-        yield to_bytes(search_hit_template.format(url=escape(url)))
+        if client_type == CLIENT_BROWSER:
+            yield to_bytes(search_hit_template.format(url=escape(url)))
 
-    yield to_bytes('''
+    if client_type == CLIENT_BROWSER:
+        yield to_bytes('''
         </pre>
     </body>
 </html>
