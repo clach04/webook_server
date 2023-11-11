@@ -56,7 +56,7 @@ except ImportError:
     werkzeug = None
 
 import ebook_conversion
-from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, load_config
+from webook_core import BootMeta, ebook_only_mimetypes, guess_mimetype, find_recent_files, load_config
 
 is_py3 = sys.version_info >= (3,)
 
@@ -215,6 +215,61 @@ def get_template(template_filename):
     template_string = template_string.decode('utf-8')
     return template_string
 
+def browser_recent(environ, start_response):
+    """Browser client only, find recently updated files
+    no parameters, possible TODO items; limit number of files and order
+    """
+    log.info('browser_recent')
+    status = '200 OK'
+    headers = [('Content-Type', 'text/html')]
+
+    headers = [
+                ('Content-Type', 'text/html'),  # "application/atom+xml; charset=UTF-8"
+                ('Cache-Control', 'no-cache, must-revalidate'),
+                ('Pragma', 'no-cache'),
+                ('Last-Modified', current_timestamp_for_header()),
+            ]
+    start_response(status, headers)
+
+    number_of_files = 50
+    search_term = 'RECENT %d' % number_of_files
+
+    log.debug('yield head')
+    yield to_bytes('''<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>webook results {search_term}</title>
+    </head>
+    <body>
+        <h1>webook results {search_term}</h1>
+
+        <pre>
+<a href="../">../</a>
+'''.format(search_term=escape(search_term))
+    )
+
+    search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
+
+    log.debug('pre recent search')
+    # find all recent files before returning any results
+    directory_path = config['ebook_dir']
+    directory_path_len = len(directory_path) + 1  # +1 is the directory seperator (assuming Unix or Windows paths)
+    recent_file_list = find_recent_files(directory_path, number_of_files=number_of_files)
+
+    log.debug('pre recent for loop')
+    for file_name in recent_file_list:
+        tmp_path_sans_prefix = file_name[directory_path_len:]
+        #results.append(tmp_path_sans_prefix)
+        # TODO include file size?
+        url = tmp_path_sans_prefix
+        yield to_bytes(search_hit_template.format(url=escape(url)))
+
+    yield to_bytes('''
+        </pre>
+    </body>
+</html>
+''')
+
 def browser_search(environ, start_response):
     """Handles/serves
 
@@ -223,7 +278,7 @@ def browser_search(environ, start_response):
     Similar to opds_search()
     TODO GET and POST support
     """
-    log.info('opds_search')
+    log.info('browser_search')
     template_filename = 'browser_search.html'
     template_string = get_template(template_filename)
 
@@ -731,6 +786,8 @@ def opds_root(environ, start_response):
         return opds_search(environ, start_response)
     if path_info.startswith('/search'):
         return browser_search(environ, start_response)
+    if path_info.startswith('/recent'):
+        return browser_recent(environ, start_response)
 
     # below handle any client type
     if path_info.startswith('/file'):
@@ -795,6 +852,7 @@ def opds_root(environ, start_response):
 <a href="file/">file/</a><br>
 <br>
 <a href="search">search</a>
+<a href="recent">recent</a>
 '''))# TODO loop through ebook_only_mimetypes and list links
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
