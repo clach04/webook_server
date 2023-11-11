@@ -479,7 +479,7 @@ def opds_search_meta(environ, start_response):
 
 
 def opds_browse(environ, start_response):
-    """Handles/serves
+    """Browse directory and handles/serves
 
         /file
         /epub
@@ -487,6 +487,8 @@ def opds_browse(environ, start_response):
         /fb2.zip
         /mobi
         /txt
+
+    To either OPDS client or web (html) client.
     """
     log.info('opds_browse')
     status = '200 OK'
@@ -717,7 +719,7 @@ def opds_root(environ, start_response):
     client_type = CLIENT_OPDS
 
     if environ['SERVER_PROTOCOL'] == 'HTTP/1.0':
-        log.error('SERVER_PROTOCOL is too old, koreader needs ast least "HTTP/1.1"')
+        log.error('SERVER_PROTOCOL is too old, koreader needs at least "HTTP/1.1"')
         raise NotImplementedError('SERVER_PROTOCOL is too old')
 
     path_info = environ['PATH_INFO']
@@ -729,6 +731,8 @@ def opds_root(environ, start_response):
         return opds_search(environ, start_response)
     if path_info.startswith('/search'):
         return browser_search(environ, start_response)
+
+    # below handle any client type
     if path_info.startswith('/file'):
         return opds_browse(environ, start_response)
     if path_info.startswith('/epub'):
