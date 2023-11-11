@@ -131,6 +131,6 @@ dmypy.json
 # media
 *.xml
 *.htm
-*.html
+#*.html
 *.epub
 *.mobi

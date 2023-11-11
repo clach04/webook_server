@@ -208,6 +208,12 @@ def not_found(environ, start_response):
 global config
 config = {}
 
+def get_template(template_filename):
+    f = open(os.path.join(os.path.dirname(__file__), 'templates', template_filename), 'rb')
+    template_string = f.read()
+    f.close()
+    template_string = template_string.decode('utf-8')
+    return template_string
 
 def browser_search(environ, start_response):
     """Handles/serves
@@ -218,6 +224,9 @@ def browser_search(environ, start_response):
     TODO GET and POST support
     """
     log.info('opds_search')
+    template_filename = 'browser_search.html'
+    template_string = get_template(template_filename)
+
     # Returns a dictionary in which the values are lists
     if environ.get('QUERY_STRING'):
         get_dict = parse_qs(environ['QUERY_STRING'])
@@ -236,22 +245,7 @@ def browser_search(environ, start_response):
 
 
     if not search_term:
-        result.append(to_bytes('''<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <title>webook search</title>
-    </head>
-    <body>
-        <h1>webook search</h1>
-
-        <form action="/search" method="GET">
-          search term : <input type="text" name="q"><br>
-          <input type="submit" value="submit">
-        </form>
-    </body>
-</html>
-
-'''))  # TODO replace with template
+        result.append(to_bytes(template_string))  # TODO replace with template (with replacement markers/variables)
         headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
         headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache
 
