@@ -212,6 +212,11 @@ def determine_client(environ):
     """
     log.info('determine client type')
     """client sniffing/determination
+
+    cURL client
+        HTTP_ACCEPT = '*/*'
+        HTTP_USER_AGENT = 'curl/8.0.1'
+
     OPDS client
         HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
 
@@ -220,8 +225,9 @@ def determine_client(environ):
         HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
     """
     client_http_accept = environ.get('HTTP_ACCEPT', '')
-    log.debug('HTTP_USER_AGENT %r', client_http_accept)
+    log.debug('HTTP_ACCEPT %r', client_http_accept)
     #client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
+    #log.debug('HTTP_USER_AGENT %r', client_http_user_agent)
     if 'html' in client_http_accept:
         client_type = CLIENT_BROWSER
     else:
