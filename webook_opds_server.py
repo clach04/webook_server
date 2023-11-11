@@ -245,11 +245,11 @@ def get_template(template_filename):
     template_string = template_string.decode('utf-8')
     return template_string
 
-def browser_recent(environ, start_response):
+def search_recent(environ, start_response):
     """Browser client only, find recently updated files
     no parameters, possible TODO items; limit number of files and order
     """
-    log.info('browser_recent')
+    log.info('search_recent')
     status = '200 OK'
 
     client_type = determine_client(environ)
@@ -865,10 +865,10 @@ def opds_root(environ, start_response):
         return opds_search(environ, start_response)
     if path_info.startswith('/search'):
         return browser_search(environ, start_response)
-    if path_info.startswith('/recent'):
-        return browser_recent(environ, start_response)
 
     # below handle any client type
+    if path_info.startswith('/recent'):
+        return search_recent(environ, start_response)
     if path_info.startswith('/file'):
         return opds_browse(environ, start_response)
     if path_info.startswith('/epub'):
