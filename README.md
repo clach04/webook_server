@@ -36,6 +36,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
   * Simple search support for both web browser and OPDS client/readers
       * Search is case insensitive (single term) partial match support (i.e. no regex support) for path names and directories
       * Example; `book` would match a file named "mybook.txt" and a directory called "books"
+  * Search for recently added files/books
   * OPTIONAL - Ebook Conversion support (currrently via Calibre ebook convert tool)
   * OPDS support has no dependencies outside of Python stdlib BUT will make use of addition WSGI servers if available
       * Tested clients; KOReader, AlReader, AlReaderX, FBReader
