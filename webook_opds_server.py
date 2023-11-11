@@ -2,7 +2,7 @@
 # -*- coding: us-ascii -*-
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
 #
-# terrible OPDS server
+# terrible OPDS server that also supports regular (html) web browsers
 # Copyright (C) 2023  Chris Clark
 """Uses WSGI, see http://docs.python.org/library/wsgiref.html
 Python 2 or Python 3
@@ -291,7 +291,7 @@ def browser_search(environ, start_response):
 '''.format(search_term=escape(search_term))
     )
 
-    search_hit_template = '''<a href="/file/{url}">{url}</a>'''
+    search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
 
     log.debug('pre for')
     #results = []  # TODO yield results?
