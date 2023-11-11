@@ -41,7 +41,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
       * Tested clients; KOReader, AlReader, AlReaderX, FBReader
       * does **not** support ebook metadata (including covers/thumbails)
       * does **not** support OPDS Page Streaming Extension
- * Web browser support requires Flask
+ * Web browser support as well as OPDS clients
   * Works with Python 3.x and 2.6+
 
 The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
@@ -67,15 +67,13 @@ Either use Operating System packages or Python packages
 
 ### Debian/Ubuntu install dependencies
 
-ONLY needed for the web browser version, not needed for OPDS
-
 For Python 2.x deployment:
 
-    sudo apt install calibre python-flask
+    sudo apt install calibre
 
 For Python 3.x deployment (with calibre ebook-convert exe - likely Python2):
 
-    sudo apt install calibre python3-flask
+    sudo apt install calibre
 
 
 ### Python install dependencies
@@ -177,39 +175,9 @@ NOTE if changing service files, e.g. adding `Environment`, restart config (not j
 
 ### https / TLS / SSL support
 
-https support is optional for the web browser version, there is no https support for the OPDS server. There is no authentication/authorization support, recommendation is to use a reverse proxy *but* Flask does make it easy and quick to expose over https.
-
-NOTE https requires pyopenssl which is not installed via the requirements above.
-
-Either install via `pip` or package manager for system, e.g.:
-
-    sudo apt-get install python-openssl
-    sudo apt-get install python3-openssl
-
-or
-
-    pip install pyopenssl
-
-Edit json config file and add to the `config` section to add a Flask run setting for `ssl_context`.
-Add either `adhoc` for quick and dirty testing or add certificate and key file names.
-
-E.g. Uncomment one of the ssl_context entries:
-
-    ....
-    "config": {
-        "debug": true,
-        "host": "0.0.0.0",
-        "port": 8080,
-        "#ssl_context": "adhoc",
-        "#ssl_context": ["cert.pem", "key.pem"],
-    },
-    ....
-
-Example #2 requires files to exist in current directory, generated via something like:
-
-    openssl req -x509 -newkey rsa:4096 -nodes -out cert.pem -keyout key.pem -days 365
-
-Which will generate a certificate valid for 1 year.
+  * There is no https support for the OPDS server.
+  * There is no authentication/authorization support
+  * Recommendation is to use a reverse proxy (with authentication).
 
 ## Known working environments
 
@@ -226,7 +194,6 @@ PRETTY_NAME="Armbian 21.08.6 Focal"
 VERSION_ID="20.04"
 
   * Python 3.8.10 (default, Mar 15 2022, 12:22:08)
-      * Flask 1.1.1
       * ebook_conversion calibre_4.99.4
 
 
@@ -235,17 +202,14 @@ VERSION_ID="20.04"
 With:
 
   * Python 2.7.13 (default, Aug 22 2020, 10:03:02)
-      * Flask 0.12.1
       * ebook_conversion calibre_2.75.1
   * Python 3.5.3 (default, Sep 27 2018, 17:25:39)
-      * Flask 0.12.1
       * calibre ebook-convert exe version 2.75.1
 
-Using the OS packages for Python, Flask, and Calibre.
+Using the OS packages for Python and Calibre.
 
 ### Microsoft Windows
 
   * Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
-      * Flask 1.1.2
       * calibre ebook-convert exe version 4.2.0
 
