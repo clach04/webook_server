@@ -223,6 +223,10 @@ def determine_client(environ):
     Web Browser
         HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
         HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
+
+    ELinks/0.13.2 Web Browser
+        HTTP_USER_AGENT 'ELinks/0.13.2 (textmode; Linux 6.1.0-9-amd64 x86_64; 188x55-2)'
+        HTTP_ACCEPT '*/*'
     """
     client_http_accept = environ.get('HTTP_ACCEPT', '')
     log.debug('HTTP_ACCEPT %r', client_http_accept)
@@ -231,7 +235,12 @@ def determine_client(environ):
     if 'html' in client_http_accept:
         client_type = CLIENT_BROWSER
     else:
-        client_type = CLIENT_OPDS
+        client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
+        log.debug('HTTP_USER_AGENT %r', client_http_user_agent)
+        if 'ELinks' in client_http_user_agent:
+            client_type = CLIENT_BROWSER
+        else:
+            client_type = CLIENT_OPDS
     return client_type
 
 # NOTE global config - see webook_core.load_config()
