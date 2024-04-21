@@ -17,17 +17,17 @@ import sys
 import time
 
 try:
-    # py2 (and <py3.8)
-    from cgi import escape
-    from cgi import parse_qs
-    from urllib import quote
-    #from urllib import quote_plus as quote
-except ImportError:
     # py3 - 3.8+
     from html import escape
     from urllib.parse import parse_qs
     from urllib.parse import quote
     #from urllib.parse import quote_plus as quote
+except ImportError:
+    # py2 (and <py3.8)
+    from cgi import escape
+    from cgi import parse_qs
+    from urllib import quote
+    #from urllib import quote_plus as quote
 
 # TODO use a real XML library
 
