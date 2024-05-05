@@ -241,6 +241,7 @@ def determine_client(environ):
             client_type = CLIENT_BROWSER
         else:
             client_type = CLIENT_OPDS
+    log.debug('client_type %r', client_type)
     return client_type
 
 # NOTE global config - see webook_core.load_config()
