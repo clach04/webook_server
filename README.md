@@ -55,6 +55,7 @@ The closest equivilents of this tool are [KindleGate](https://github.com/hzengin
 
 Also take a look at:
 
+  * Other Tools https://github.com/clach04/webook_server/issues/9
   * https://github.com/seblucas/cops - requires calibre2opds
   * https://github.com/calibre2opds/calibre2opds
   * https://github.com/dubyte/dir2opds
