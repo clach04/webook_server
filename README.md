@@ -215,3 +215,11 @@ Using the OS packages for Python and Calibre.
   * Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
       * calibre ebook-convert exe version 4.2.0
 
+### cURL client
+
+For testing. By default cURL will be detected by webook_opds_server.py
+as an OPDS client (rather than as a web browser), this can be influenced
+via the http accept header.
+
+  curl -v --header "ACCEPT: */*"  # NOTE this happens to be the default so this is not actually needed
+  curl -v --header "ACCEPT: text/html"  # convince OPDS server this client is a web browser
