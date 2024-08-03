@@ -1005,11 +1005,43 @@ def opds_root(environ, start_response):
     </entry>
 
     <entry>
+      <title>Recent 10</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=10"/>
+      <updated>2023-09-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent10</id>
+      <content type="text">Find the latest 10 books available</content>
+    </entry>
+
+    <entry>
+      <title>Recent 25</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=25"/>
+      <updated>2023-09-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent25</id>
+      <content type="text">Find the latest 25 books available</content>
+    </entry>
+
+    <entry>
+      <title>Recent 50</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=50"/>
+      <updated>2023-09-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent50</id>
+      <content type="text">Find the latest 50 books available</content>
+    </entry>
+
+    <entry>
       <title>Recent 100</title>
       <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=100"/>
       <updated>2023-09-28T15:54:14Z</updated>
       <id>{WEBOOK_SELF_URL_PATH}/recent100</id>
       <content type="text">Find the latest 100 books available</content>
+    </entry>
+
+    <entry>
+      <title>Recent 200</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=200"/>
+      <updated>2023-09-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent200</id>
+      <content type="text">Find the latest 200 books available</content>
     </entry>
 
   </feed>
