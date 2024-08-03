@@ -41,10 +41,10 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
       * Example; `book` would match a file named "mybook.txt" and a directory called "books"
   * OPTIONAL - Ebook Conversion support (currrently via Calibre ebook convert tool)
   * OPDS support has no dependencies outside of Python stdlib BUT will make use of addition WSGI servers if available
-      * Tested clients; KOReader, AlReader, AlReaderX, FBReader
+      * Tested clients; KOReader (Android and Kindle), AlReader (Android), AlReaderX (Android), FBReader (Android, FBReader Premium (Android)
       * does **not** support ebook metadata (including covers/thumbails)
       * does **not** support OPDS Page Streaming Extension
- * Web browser support as well as OPDS clients
+ * Web browser support (Mozilla Firefox, Google Chrome, Microsoft Edge, Elink, Lynx, etc.) as well as OPDS clients
   * Works with Python 3.x and 2.6+
 
 The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
