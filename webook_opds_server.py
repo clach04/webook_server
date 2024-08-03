@@ -303,8 +303,9 @@ def get_template(template_filename):
     return template_string
 
 def search_recent(environ, start_response):
-    """Browser client only, find recently updated files
-    no parameters, possible TODO items; limit number of files and order
+    """For both OPDS and Web Browser clients, find recently updated files
+    no parameters, possible TODO items; limit number of files and order (how; Parameters or url path?)
+    Implemented as an iterator/generator to return initial results as soon as possible.
     """
     log.info('search_recent')
     status = '200 OK'
@@ -327,12 +328,33 @@ def search_recent(environ, start_response):
 
     start_response(status, headers)
 
-    number_of_files = 50
-    sort_order = ORDER_DESCENDING
+    # Returns a dictionary in which the values are lists
+    if environ.get('QUERY_STRING'):
+        get_dict = parse_qs(environ['QUERY_STRING'])
+    else:
+        get_dict = {}
+    default_number_of_files = 50
+    number_of_files = get_dict.get('n')  # number of files to include
+    log.info('recent search number_of_files %s', number_of_files)
+    if number_of_files:
+        number_of_files = number_of_files[0]  # the first one
+        try:
+            number_of_files = int(number_of_files)
+        except ValueError:
+            number_of_files = default_number_of_files
+    else:
+        number_of_files = default_number_of_files
+    if number_of_files <= 0:
+        number_of_files = default_number_of_files
+    log.info('recent search number_of_files %s', number_of_files)
+
+
+    sort_order = ORDER_DESCENDING  # TODO make parameter like number_of_files
     search_term = 'RECENT %d' % number_of_files
 
     log.debug('yield head')
     if client_type == CLIENT_BROWSER:
+        # TODO add support for sort_order - order by link to reverse direction
         yield to_bytes('''<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -347,6 +369,7 @@ def search_recent(environ, start_response):
     )
         search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
     else:  # CLIENT_OPDS
+        # FIXME/TODO review <opensearch:itemsPerPage>25</opensearch:itemsPerPage> and compare with number_of_files parameter/value
         yield to_bytes(
         '''<?xml version="1.0" encoding="UTF-8"?>
           <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
@@ -989,8 +1012,13 @@ def opds_root(environ, start_response):
 <a href="epub/">epub/</a><br>
 <a href="file/">file/</a><br>
 <br>
-<a href="search">search</a>
+<a href="search">search</a><br>
 <a href="recent">recent</a>
+<a href="recent?n=10">recent 10</a>
+<a href="recent?n=25">recent 25</a>
+<a href="recent?n=50">recent 50</a>
+<a href="recent?n=100">recent 100</a>
+<a href="recent?n=200">recent 200</a>
 '''))# TODO loop through ebook_only_mimetypes and list links
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
