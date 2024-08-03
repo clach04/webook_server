@@ -34,6 +34,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
   * Serve directory of ebooks to either a web browser or an OPDS client
       * Base bones [OPDS Spec support](https://specs.opds.io/opds-1.2) - does not pretend to be complete, it implements enough for my basic usage at home
   * Simple search support for both web browser and OPDS client/readers
+      * Search for recently added files/books
       * Search is case insensitive (single term) partial match support (i.e. no regex support) for path names and directories
       * Example; `book` would match a file named "mybook.txt" and a directory called "books"
   * OPTIONAL - Ebook Conversion support (currrently via Calibre ebook convert tool)
@@ -46,7 +47,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
 
 The closest equivilents of this tool are [KindleGate](https://github.com/hzengin/KindleGate) which **only** supports conversion to mobi and https://github.com/dubyte/dir2opds.
 
-  * webook_server.py (deprecated) is ONLY for web browsers (e.g. the Kindle web browser)
+  * webook_server.py (deprecated and only available in old legacy branch https://github.com/clach04/webook_server/tree/legacy_flask) is ONLY for web browsers (e.g. the Kindle web browser)
   * webook_opds_server.py (since #21) is for both web browsers (e.g. the Kindle web browser) and OPDS clients like:
       * https://github.com/koreader/koreader
       * http://alreader.kms.ru/
@@ -54,6 +55,7 @@ The closest equivilents of this tool are [KindleGate](https://github.com/hzengin
 
 Also take a look at:
 
+  * Other Tools https://github.com/clach04/webook_server/issues/9
   * https://github.com/seblucas/cops - requires calibre2opds
   * https://github.com/calibre2opds/calibre2opds
   * https://github.com/dubyte/dir2opds
@@ -212,4 +214,13 @@ Using the OS packages for Python and Calibre.
 
   * Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
       * calibre ebook-convert exe version 4.2.0
+
+### cURL client
+
+For testing. By default cURL will be detected by webook_opds_server.py
+as an OPDS client (rather than as a web browser), this can be influenced
+via the http accept header.
+
+  curl -v --header "ACCEPT: */*"  # NOTE this happens to be the default so this is not actually needed
+  curl -v --header "ACCEPT: text/html"  # convince OPDS server this client is a web browser
 
