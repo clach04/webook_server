@@ -213,18 +213,57 @@ def determine_client(environ):
     log.info('determine client type')
     """client sniffing/determination
 
-    cURL client
+    NOTE if HTTP_ACCEPT not listed, it was missing (not present) in client request
+
+    ## OPDS clients
+
+    ### cURL client - Treat as OPDS client (for debugging/testing)
         HTTP_ACCEPT = '*/*'
         HTTP_USER_AGENT = 'curl/8.0.1'
 
-    OPDS client
+    ### KoReader
         HTTP_USER_AGENT = 'KOReader/2022.08 (https://koreader.rocks/) LuaSocket/3.0-rc1'
 
-    Web Browser
+    ### AlReader (pre X)
+        HTTP_ACCEPT ''
+        HTTP_USER_AGENT 'AlReader.Droid'
+
+    ### AlReaderX (later than original)
+        HTTP_ACCEPT ''  - i.e. empty
+        HTTP_USER_AGENT 'AlReaderX'
+
+    ### FBReader (Android)
+        HTTP_ACCEPT ''
+        HTTP_USER_AGENT 'FBReader/3.1.7 (Android 10, star2qltechn, SM-G9650)'
+
+        So tail varies on version, OS version, and hardware.
+
+    ### FBReader Premium (Android)
+        HTTP_ACCEPT ''
+        HTTP_USER_AGENT 'FBReader/3.1.6 (Android 10, star2qltechn, SM-G9650)'
+
+        Basically the same as non-premium.
+
+    TODO FBReader Linux
+    TODO Alreader PocketPC?
+    TODO Comic reader(s)
+
+    ## Web Browsers
+
+    ### Mozilla Firefox
         HTTP_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0'
         HTTP_ACCEPT = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
 
-    ELinks/0.13.2 Web Browser
+    ### Microsoft Edge - 2024 Version 127.0.2651.74 (Official build) (64-bit)
+        HTTP_ACCEPT 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+
+    ### Mobile Firefox (2024) Version 128.0.2-2-24-722223746
+        HTTP_ACCEPT 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8'
+
+    ### Mobile Google Chrome (2024) Version 127.0.6533.64
+        HTTP_ACCEPT 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7'
+
+    ### ELinks/0.13.2 Web Browser
         HTTP_USER_AGENT 'ELinks/0.13.2 (textmode; Linux 6.1.0-9-amd64 x86_64; 188x55-2)'
         HTTP_ACCEPT '*/*'
     """
