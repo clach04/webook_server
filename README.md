@@ -51,7 +51,7 @@ Given a directory of (possibly directories of) ebooks serve a web (http) interfa
       * Tested clients; KOReader (Android and Kindle), AlReader (Android), AlReaderX (Android), FBReader (Android, FBReader Premium (Android)
       * does **not** support ebook metadata (including covers/thumbails)
       * does **not** support OPDS Page Streaming Extension
- * Web browser support (Mozilla Firefox, Google Chrome, Microsoft Edge, Elink, Lynx, etc.) as well as OPDS clients
+ * Web browser support (Native Kindle (experimental) web browser, Mozilla Firefox, Google Chrome, Microsoft Edge, Elink, Lynx, etc.) as well as OPDS clients
   * Works with Python 3.x and 2.6+
 
 
