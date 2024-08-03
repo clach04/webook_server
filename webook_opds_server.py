@@ -369,7 +369,7 @@ def search_recent(environ, start_response):
     )
         search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
     else:  # CLIENT_OPDS
-        # FIXME/TODO review <opensearch:itemsPerPage>25</opensearch:itemsPerPage> and compare with number_of_files parameter/value
+        # <opensearch:itemsPerPage>25</opensearch:itemsPerPage> seems to work well an be easy to page between results on my devices with minimal scrolling
         yield to_bytes(
         '''<?xml version="1.0" encoding="UTF-8"?>
           <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
@@ -975,6 +975,7 @@ def opds_root(environ, start_response):
     client_type = determine_client(environ)
 
     if client_type == CLIENT_OPDS:
+        # FIXME <updated> tag is static and could cause caching in smart clients
         result.append(to_bytes(
 '''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
@@ -1001,6 +1002,14 @@ def opds_root(environ, start_response):
       <updated>2023-08-28T15:54:14Z</updated>
       <id>{WEBOOK_SELF_URL_PATH}/recent</id>
       <content type="text">Find the latest books available</content>
+    </entry>
+
+    <entry>
+      <title>Recent 100</title>
+      <link type="application/atom+xml;profile=opds-catalog;kind=acquisition" rel="http://opds-spec.org/sort/new" href="{WEBOOK_SELF_URL_PATH}/recent?n=100"/>
+      <updated>2023-09-28T15:54:14Z</updated>
+      <id>{WEBOOK_SELF_URL_PATH}/recent100</id>
+      <content type="text">Find the latest 100 books available</content>
     </entry>
 
   </feed>
