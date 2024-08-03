@@ -402,6 +402,7 @@ def search_recent(environ, start_response):
             yield to_bytes(search_hit_template.format(url=escape(url)))
         else:  # CLIENT_OPDS
             metadata = BootMeta(tmp_path_sans_prefix)
+            # FIXME code duplication for book entries - refactor
             # TODO include file size?
             # TODO try and guess title and author name
             # TODO is there a way to get "book information" link to work?
@@ -613,6 +614,7 @@ def opds_search(environ, start_response):
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 metadata = BootMeta(tmp_path_sans_prefix)
+                # FIXME code duplication for book entries - refactor
                 # TODO include file size?
                 # TODO try and guess title and author name
                 # TODO is there a way to get "book information" link to work?
@@ -884,6 +886,7 @@ def opds_browse(environ, start_response):
         else:
             # got a file (maybe an slink)
             metadata = BootMeta(file_path)
+            # FIXME code duplication for book entries - refactor! file_extension feature for Raw missing in all other use cases
             # TODO include file size?
             # TODO try and guess title and author name
             # TODO is there a way to get "book information" link to work?
