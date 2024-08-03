@@ -94,8 +94,17 @@ class BootMeta:
     def title(self):
         """Guess book title based on filename (rather than content). Returns string.
         """
-        filename = os.path.basename(self.filename)  # bother messing with file extension?
-        return filename
+        filename = os.path.basename(self.filename)
+        title = os.path.splitext(filename)[0]  # ignore file extension, as some clients (KoReader) use this as filename based and then add on file type as extension
+        return title
+
+    @property
+    def file_extension(self):
+        """Guess book file extension (likely not a guess) based on filename (rather than content). Returns string.
+        """
+        filename = os.path.basename(self.filename)
+        result = os.path.splitext(filename)[1]
+        return result
 
 
 def load_config(config_filename):
