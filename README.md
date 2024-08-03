@@ -1,3 +1,5 @@
+-*- coding: utf-8 -*-
+
 # webook_server - Worst E-book server
 
 ## Table Of Contents
