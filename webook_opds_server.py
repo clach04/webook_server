@@ -266,14 +266,22 @@ def determine_client(environ):
     ### ELinks/0.13.2 Web Browser
         HTTP_USER_AGENT 'ELinks/0.13.2 (textmode; Linux 6.1.0-9-amd64 x86_64; 188x55-2)'
         HTTP_ACCEPT '*/*'
+
+    ### Lynx Version 2.9.0dev.5 (27 Feb 2020)
+        SERVER_PROTOCOL - http 1.0 (rather than 1.1 which other clients can handle)
+        HTTP_ACCEPT 'text/html, text/plain, text/sgml, text/css, */*;q=0.01'
+        HTTP_USER_AGENT = 'Lynx/2.9.0dev.5 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/3.6.13'
+
     """
     client_http_accept = environ.get('HTTP_ACCEPT', '')
     log.debug('HTTP_ACCEPT %r', client_http_accept)
     #client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
     #log.debug('HTTP_USER_AGENT %r', client_http_user_agent)
     if 'html' in client_http_accept:
+        # Matches **most** web browsers
         client_type = CLIENT_BROWSER
     else:
+        # likely an OPDS client, with odd web browser sniff/detection code
         client_http_user_agent = environ.get('HTTP_USER_AGENT', '')  # not needed/used (yet)
         log.debug('HTTP_USER_AGENT %r', client_http_user_agent)
         if 'ELinks' in client_http_user_agent:
@@ -886,6 +894,8 @@ def opds_browse(environ, start_response):
     return result
 
 
+KOREADER_USER_AGENT_PREFIX = 'KOReader'
+
 def opds_root(environ, start_response):
     """Handles/serves
 
@@ -902,8 +912,11 @@ def opds_root(environ, start_response):
     client_type = CLIENT_OPDS
 
     if environ['SERVER_PROTOCOL'] == 'HTTP/1.0':
+        log.error('SERVER_PROTOCOL check for HTTP_USER_AGENT = %r' % environ['HTTP_USER_AGENT'])
         log.error('SERVER_PROTOCOL is too old, koreader needs at least "HTTP/1.1"')
-        raise NotImplementedError('SERVER_PROTOCOL is too old')
+        if environ['HTTP_USER_AGENT'].startswith(KOREADER_USER_AGENT_PREFIX):
+            raise NotImplementedError('SERVER_PROTOCOL is too old')
+        # else try our luck.... so far seen with Lynx
 
     path_info = environ['PATH_INFO']
     print(repr(path_info))
