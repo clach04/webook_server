@@ -5,9 +5,9 @@
 Home page https://github.com/clach04/webook_server
 
 ## Table Of Contents
-
   * [Overview](#overview)
     + [Features](#features)
+  * [Alternatives](#alternatives)
   * [Getting Started](#getting-started)
     + [Debian/Ubuntu install dependencies](#debian-ubuntu-install-dependencies)
     + [Python install dependencies](#python-install-dependencies)
@@ -19,8 +19,13 @@ Home page https://github.com/clach04/webook_server
     + [Operating System Environment Variables](#operating-system-environment-variables)
     + [https / TLS / SSL support](#https---tls---ssl-support)
   * [Known working environments](#known-working-environments)
+    + [Debian / Ubuntu / Armbian](#debian---ubuntu---armbian)
     + [Debian GNU/Linux 9 (stretch)](#debian-gnu-linux-9--stretch-)
     + [Microsoft Windows](#microsoft-windows)
+    + [cURL client](#curl-client)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 
 ## Overview
 
