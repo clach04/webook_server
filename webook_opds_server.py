@@ -302,6 +302,49 @@ def get_template(template_filename):
     template_string = template_string.decode('utf-8')
     return template_string
 
+def opds_book_entry(full_file_path_and_name_to_book, web_directory_path, filename=None):
+    """Refactored and extracted out of opds_browse()
+    return a single OPDS book/file entry in bytes (revisit, should it be string?)
+    Parameters:
+        full_file_path_and_name_to_book - full local path on local/native filesystem to the file
+        web_directory_path - web path of file (i.e. the parent URL of the file)
+        filename - optional filename, derived from full_file_path_and_name_to_book if omitted
+    """
+    file_path = full_file_path_and_name_to_book
+    directory_path = web_directory_path
+    filename = filename or os.path.basename(full_file_path_and_name_to_book)
+
+    # Needs to be a file (maybe an slink) - not a directory
+    metadata = BootMeta(file_path)
+    # TODO include file size?
+    # TODO try and guess title and author name
+    # TODO is there a way to get "book information" link to work?
+    result = to_bytes('''
+    <entry>
+        <title>{title}</title>
+        <author>
+            <name>{author_name_surname_first}</name>
+        </author>
+        <id>{title}</id>
+        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw ({file_extension})" href="/file/{href_path}"/><!-- koreader will hide and not display this due to (some) unsupported mime-type - hence "Original" with different type -->
+        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original ({file_extension})" href="/file/{href_path}"/>
+        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
+        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
+        <link type="text/plain" rel="http://opds-spec.org/acquisition" title="Text (txt) convert" href="/txt/{href_path}"/>
+    </entry>
+'''.format(
+        author_name_surname_first=metadata.author,  #'lastname, firstname',
+        href_path=quote(directory_path  + filename),
+        href_path_epub=quote('/epub/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
+        href_path_mobi=quote('/mobi/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
+        mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
+        # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
+        title=xml_escape(metadata.title),
+        file_extension=metadata.file_extension  # no need to escape?
+        ))
+    return result
+
+
 def search_recent(environ, start_response):
     """For both OPDS and Web Browser clients, find recently updated files
     no parameters, possible TODO items; limit number of files and order (how; Parameters or url path?)
@@ -402,7 +445,7 @@ def search_recent(environ, start_response):
             yield to_bytes(search_hit_template.format(url=escape(url)))
         else:  # CLIENT_OPDS
             metadata = BootMeta(tmp_path_sans_prefix)
-            # FIXME code duplication for book entries - refactor
+            # FIXME code duplication for book entries - refactor - use opds_book_entry()
             # TODO include file size?
             # TODO try and guess title and author name
             # TODO is there a way to get "book information" link to work?
@@ -614,7 +657,7 @@ def opds_search(environ, start_response):
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 metadata = BootMeta(tmp_path_sans_prefix)
-                # FIXME code duplication for book entries - refactor
+                # FIXME code duplication for book entries - refactor - use opds_book_entry()
                 # TODO include file size?
                 # TODO try and guess title and author name
                 # TODO is there a way to get "book information" link to work?
@@ -886,7 +929,10 @@ def opds_browse(environ, start_response):
         else:
             # got a file (maybe an slink)
             metadata = BootMeta(file_path)
-            # FIXME code duplication for book entries - refactor! file_extension feature for Raw missing in all other use cases
+            single_book_entry = opds_book_entry(file_path, directory_path, filename=filename)
+            result.append(single_book_entry)
+            """
+            # FIXME code duplication for book entries - refactor! file_extension feature for Raw missing in all other use cases.  - use opds_book_entry()
             # TODO include file size?
             # TODO try and guess title and author name
             # TODO is there a way to get "book information" link to work?
@@ -913,6 +959,7 @@ def opds_browse(environ, start_response):
         title=xml_escape(metadata.title),
         file_extension=metadata.file_extension  # no need to escape?
         )))
+            """
 
     result.append(to_bytes('''  </feed>
 '''))
