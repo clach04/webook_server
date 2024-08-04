@@ -331,18 +331,16 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
         <id>{title}</id>
         <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw ({file_extension})" href="/file/{href_path}"/><!-- koreader will hide and not display this due to (some) unsupported mime-type - hence "Original" with different type -->
         <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original ({file_extension})" href="/file/{href_path}"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
+        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{href_path}"/>
+        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{href_path}"/>
         <link type="text/plain" rel="http://opds-spec.org/acquisition" title="Text (txt) convert" href="/txt/{href_path}"/>
     </entry>
 '''.format(
-        author_name_surname_first=metadata.author,  #'lastname, firstname',
+        author_name_surname_first=metadata.author,  # 'lastname, firstname',
         href_path=quote(web_full_file_path_and_name_to_book),
-        href_path_epub=quote('/epub/' + web_full_file_path_and_name_to_book),  # TODO this can be removed, see other hrefs
-        href_path_mobi=quote('/mobi/' + web_full_file_path_and_name_to_book),  # TODO this can be removed, see other hrefs
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
-        title=xml_escape(metadata.title),
+        title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
         file_extension=metadata.file_extension  # no need to escape?
         ))
     return result
@@ -448,8 +446,9 @@ def search_recent(environ, start_response):
             yield to_bytes(search_hit_template.format(url=escape(url)))
         else:  # CLIENT_OPDS
 
-            """FIXME search_recent() refactor to use shared opds_book_entry()
-            single_book_entry = opds_book_entry(tmp_path_sans_prefix, FIXME_directory_path, filename=FIXME_filename)
+            #print('search_recent() params %r' % ((file_name, tmp_path_sans_prefix, ),))
+            #"""FIXME search_recent() refactor to use shared opds_book_entry()
+            single_book_entry = opds_book_entry(tmp_path_sans_prefix, web_full_file_path_and_name_to_book=tmp_path_sans_prefix)
             yield single_book_entry
             """
 
@@ -474,6 +473,7 @@ def search_recent(environ, start_response):
         mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         ))
+            """
 
 
     if not recent_file_list:
