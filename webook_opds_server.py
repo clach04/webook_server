@@ -636,39 +636,13 @@ def opds_search(environ, start_response):
             tmp_path = join(root, file_name)
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
-
-                print('opds_search() params %r' % ((file_name, tmp_path_sans_prefix, ),))
+                #print('opds_search() params %r' % ((file_name, tmp_path_sans_prefix, ),))
                 single_book_entry = opds_book_entry(file_name, web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
                 result.append(single_book_entry)
 
-                #"""FIXME opds_search() refactor to use shared opds_book_entry()
-                # at this point tmp_path_sans_prefixis the URL path including filename
-                """
                 #print('DEBUG file_name: %r' % file_name)
                 #print('DEBUG tmp_path_sans_prefix: %r' % tmp_path_sans_prefix)
                 #print('DEBUG %r' % )
-
-                metadata = BootMeta(tmp_path_sans_prefix)
-                # FIXME code duplication for book entries - refactor - use opds_book_entry()
-                result.append(to_bytes('''
-    <entry>
-        <title>{title}</title>
-        <author>
-            <name>{author_name_surname_first}</name>
-        </author>
-        <id>{tmp_path_sans_prefix}</id>
-        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{tmp_path_sans_prefix}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
-        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{tmp_path_sans_prefix}"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{tmp_path_sans_prefix}"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
-    </entry>
-'''.format(
-        title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
-        tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
-        author_name_surname_first=metadata.author,
-        mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
-        )))
-                """
     log.info('search of file system complete')
 
     #log.error('NotImplemented search support')
