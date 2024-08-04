@@ -197,6 +197,8 @@ def not_found(environ, start_response):
     start_response('404 NOT FOUND', [('Content-Type', 'text/html')])
     return [to_bytes('''<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 Not Found</title>
 </head><body>
 <h1>Not Found</h1>
@@ -402,6 +404,8 @@ def search_recent(environ, start_response):
         yield to_bytes('''<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <title>webook results {search_term}</title>
     </head>
     <body>
@@ -528,6 +532,7 @@ def browser_search(environ, start_response):
     yield to_bytes('''<html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>webook results {search_term}</title>
     </head>
     <body>
@@ -821,7 +826,7 @@ def opds_browse(environ, start_response):
         log.info('browse %s', directory_path)
         # format vaugely like Apache and Nginx file browse / auto-index mode
         # TODO use a template
-        HTML_HEADER = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
+        HTML_HEADER = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
         HTML_FOOTER = "</pre><hr></body></html>"
         path_title = environ['PATH_INFO']
         html = HTML_HEADER.format(path_title=path_title)
@@ -1032,7 +1037,16 @@ def opds_root(environ, start_response):
             ))
     elif client_type == CLIENT_BROWSER:
         headers = [('Content-Type', 'text/html')]
-        result.append(to_bytes('''<a href="mobi/">mobi/</a><br>
+        result.append(to_bytes('''
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeBook Server</title>
+</head><body>
+
+<h1>WeBook Server</h1>
+
+<a href="mobi/">mobi/</a><br>
 <a href="epub/">epub/</a><br>
 <a href="file/">file/</a><br>
 <br>
@@ -1043,6 +1057,17 @@ def opds_root(environ, start_response):
 <a href="recent?n=50">recent 50</a>
 <a href="recent?n=100">recent 100</a>
 <a href="recent?n=200">recent 200</a>
+
+<br>
+
+<hr>
+
+<a href="https://github.com/clach04/webook_server/">
+webook_server - light weight OPDS and web server that converts ebook formats on the fly
+</a>
+
+</body></html>
+
 '''))# TODO loop through ebook_only_mimetypes and list links
 
     headers.append(('Content-Length', str(len(result[0]))))  # in case WSGI server does not implement this
