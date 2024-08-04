@@ -637,10 +637,12 @@ def opds_search(environ, start_response):
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
 
-                """FIXME opds_search() refactor to use shared opds_book_entry()
-                # at this point tmp_path_sans_prefixis the URL path including filename
-                single_book_entry = opds_book_entry(tmp_path_sans_prefix, FIXME_directory_path, filename=file_name)
+                print('opds_search() params %r' % ((file_name, tmp_path_sans_prefix, ),))
+                single_book_entry = opds_book_entry(file_name, web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
                 result.append(single_book_entry)
+
+                #"""FIXME opds_search() refactor to use shared opds_book_entry()
+                # at this point tmp_path_sans_prefixis the URL path including filename
                 """
                 #print('DEBUG file_name: %r' % file_name)
                 #print('DEBUG tmp_path_sans_prefix: %r' % tmp_path_sans_prefix)
@@ -666,6 +668,7 @@ def opds_search(environ, start_response):
         author_name_surname_first=metadata.author,
         mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         )))
+                """
     log.info('search of file system complete')
 
     #log.error('NotImplemented search support')
