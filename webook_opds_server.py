@@ -928,38 +928,8 @@ def opds_browse(environ, start_response):
                 #print(result[-1])
         else:
             # got a file (maybe an slink)
-            metadata = BootMeta(file_path)
             single_book_entry = opds_book_entry(file_path, directory_path, filename=filename)
             result.append(single_book_entry)
-            """
-            # FIXME code duplication for book entries - refactor! file_extension feature for Raw missing in all other use cases.  - use opds_book_entry()
-            # TODO include file size?
-            # TODO try and guess title and author name
-            # TODO is there a way to get "book information" link to work?
-            result.append(to_bytes('''
-    <entry>
-        <title>{title}</title>
-        <author>
-            <name>{author_name_surname_first}</name>
-        </author>
-        <id>{title}</id>
-        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw ({file_extension})" href="/file/{href_path}"/><!-- koreader will hide and not display this due to (some) unsupported mime-type - hence "Original" with different type -->
-        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original ({file_extension})" href="/file/{href_path}"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="{href_path_epub}"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="{href_path_mobi}"/>
-        <link type="text/plain" rel="http://opds-spec.org/acquisition" title="Text (txt) convert" href="/txt/{href_path}"/>
-    </entry>
-'''.format(
-        author_name_surname_first=metadata.author,  #'lastname, firstname',
-        href_path=quote( directory_path  + filename),
-        href_path_epub=quote('/epub/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
-        href_path_mobi=quote('/mobi/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
-        mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
-        # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
-        title=xml_escape(metadata.title),
-        file_extension=metadata.file_extension  # no need to escape?
-        )))
-            """
 
     result.append(to_bytes('''  </feed>
 '''))
