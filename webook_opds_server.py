@@ -447,33 +447,8 @@ def search_recent(environ, start_response):
         else:  # CLIENT_OPDS
 
             #print('search_recent() params %r' % ((file_name, tmp_path_sans_prefix, ),))
-            #"""FIXME search_recent() refactor to use shared opds_book_entry()
             single_book_entry = opds_book_entry(tmp_path_sans_prefix, web_full_file_path_and_name_to_book=tmp_path_sans_prefix)
             yield single_book_entry
-            """
-
-            metadata = BootMeta(tmp_path_sans_prefix)
-            # FIXME code duplication for book entries - refactor - use opds_book_entry()
-            yield to_bytes('''
-    <entry>
-        <title>{title}</title>
-        <author>
-            <name>{author_name_surname_first}</name>
-        </author>
-        <id>{tmp_path_sans_prefix}</id>
-        <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw" href="/file/{tmp_path_sans_prefix}"/><!-- koreader will hide and not display this due to unsupported mime-type -->
-        <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original" href="/file/{tmp_path_sans_prefix}"/>
-        <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{tmp_path_sans_prefix}"/>
-        <link type="application/x-mobipocket-ebook" rel="http://opds-spec.org/acquisition" title="Kindle (mobi) convert" href="/mobi/{tmp_path_sans_prefix}"/>
-    </entry>
-'''.format(
-        title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
-        tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
-        author_name_surname_first=metadata.author,
-        mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
-        # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
-        ))
-            """
 
 
     if not recent_file_list:
