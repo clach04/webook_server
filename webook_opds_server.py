@@ -445,9 +445,8 @@ def search_recent(environ, start_response):
         if client_type == CLIENT_BROWSER:
             yield to_bytes(search_hit_template.format(url=escape(url)))
         else:  # CLIENT_OPDS
-
             #print('search_recent() params %r' % ((file_name, tmp_path_sans_prefix, ),))
-            single_book_entry = opds_book_entry(tmp_path_sans_prefix, web_full_file_path_and_name_to_book=tmp_path_sans_prefix)
+            single_book_entry = opds_book_entry(file_name, web_full_file_path_and_name_to_book=tmp_path_sans_prefix)
             yield single_book_entry
 
 
