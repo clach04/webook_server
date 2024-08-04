@@ -302,17 +302,20 @@ def get_template(template_filename):
     template_string = template_string.decode('utf-8')
     return template_string
 
-def opds_book_entry(full_file_path_and_name_to_book, web_directory_path, filename=None):
+def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, web_full_file_path_and_name_to_book=None, filename=None):
     """Refactored and extracted out of opds_browse()
     return a single OPDS book/file entry in bytes (revisit, should it be string?)
     Parameters:
         full_file_path_and_name_to_book - full local path on local/native filesystem to the file
-        web_directory_path - web path of file (i.e. the parent URL of the file)
+        web_directory_path - web path of file (i.e. the parent URL of the file) which if not empty needs to include trailing slash?
         filename - optional filename, derived from full_file_path_and_name_to_book if omitted
     """
+    #print('opds_book_entry params %r' % ((full_file_path_and_name_to_book, web_directory_path, filename),))
     file_path = full_file_path_and_name_to_book
-    directory_path = web_directory_path
     filename = filename or os.path.basename(full_file_path_and_name_to_book)
+    web_directory_path = web_directory_path or ''
+    directory_path = web_directory_path
+    web_full_file_path_and_name_to_book = web_full_file_path_and_name_to_book or (directory_path + filename)
 
     # Needs to be a file (maybe an slink) - not a directory
     metadata = BootMeta(file_path)
@@ -334,9 +337,9 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path, filenam
     </entry>
 '''.format(
         author_name_surname_first=metadata.author,  #'lastname, firstname',
-        href_path=quote(directory_path  + filename),
-        href_path_epub=quote('/epub/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
-        href_path_mobi=quote('/mobi/' + directory_path  + filename),  # TODO this can be removed, see other hrefs
+        href_path=quote(web_full_file_path_and_name_to_book),
+        href_path_epub=quote('/epub/' + web_full_file_path_and_name_to_book),  # TODO this can be removed, see other hrefs
+        href_path_mobi=quote('/mobi/' + web_full_file_path_and_name_to_book),  # TODO this can be removed, see other hrefs
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         title=xml_escape(metadata.title),
@@ -444,11 +447,14 @@ def search_recent(environ, start_response):
         if client_type == CLIENT_BROWSER:
             yield to_bytes(search_hit_template.format(url=escape(url)))
         else:  # CLIENT_OPDS
+
+            """FIXME search_recent() refactor to use shared opds_book_entry()
+            single_book_entry = opds_book_entry(tmp_path_sans_prefix, FIXME_directory_path, filename=FIXME_filename)
+            yield single_book_entry
+            """
+
             metadata = BootMeta(tmp_path_sans_prefix)
             # FIXME code duplication for book entries - refactor - use opds_book_entry()
-            # TODO include file size?
-            # TODO try and guess title and author name
-            # TODO is there a way to get "book information" link to work?
             yield to_bytes('''
     <entry>
         <title>{title}</title>
@@ -656,11 +662,18 @@ def opds_search(environ, start_response):
             tmp_path = join(root, file_name)
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
+
+                """FIXME opds_search() refactor to use shared opds_book_entry()
+                # at this point tmp_path_sans_prefixis the URL path including filename
+                single_book_entry = opds_book_entry(tmp_path_sans_prefix, FIXME_directory_path, filename=file_name)
+                result.append(single_book_entry)
+                """
+                #print('DEBUG file_name: %r' % file_name)
+                #print('DEBUG tmp_path_sans_prefix: %r' % tmp_path_sans_prefix)
+                #print('DEBUG %r' % )
+
                 metadata = BootMeta(tmp_path_sans_prefix)
                 # FIXME code duplication for book entries - refactor - use opds_book_entry()
-                # TODO include file size?
-                # TODO try and guess title and author name
-                # TODO is there a way to get "book information" link to work?
                 result.append(to_bytes('''
     <entry>
         <title>{title}</title>
@@ -678,7 +691,6 @@ def opds_search(environ, start_response):
         tmp_path_sans_prefix=quote(tmp_path_sans_prefix),
         author_name_surname_first=metadata.author,
         mime_type=metadata.mimetype  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
-        # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         )))
     log.info('search of file system complete')
 
@@ -928,7 +940,7 @@ def opds_browse(environ, start_response):
                 #print(result[-1])
         else:
             # got a file (maybe an slink)
-            single_book_entry = opds_book_entry(file_path, directory_path, filename=filename)
+            single_book_entry = opds_book_entry(file_path, web_directory_path=directory_path, filename=filename)
             result.append(single_book_entry)
 
     result.append(to_bytes('''  </feed>
