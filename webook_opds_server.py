@@ -1041,10 +1041,10 @@ def opds_root(environ, start_response):
 <html><head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WeBook Server</title>
+<title>&#x1F4A9;&#x1f4d6; WeBook Server</title>
 </head><body>
 
-<h1>WeBook Server</h1>
+<h1>&#x1F4A9;&#x1f4d6; WeBook Server</h1>
 
 <a href="mobi/">mobi/</a><br>
 <a href="epub/">epub/</a><br>
@@ -1063,7 +1063,7 @@ def opds_root(environ, start_response):
 <hr>
 
 <a href="https://github.com/clach04/webook_server/">
-webook_server - light weight OPDS and web server that converts ebook formats on the fly
+&#x1F4A9;&#x1f4d6; webook_server - light weight OPDS and web server that converts ebook formats on the fly
 </a>
 
 </body></html>
