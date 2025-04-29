@@ -827,7 +827,7 @@ def opds_browse(environ, start_response):
         # format vaugely like Apache and Nginx file browse / auto-index mode
         # TODO use a template
         HTML_HEADER = """<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Index of {path_title}</title></head><body bgcolor="white"><h1>Index of {path_title}</h1><hr><pre><a href="../">../</a>\n"""
-        HTML_FOOTER = "</pre><hr></body></html>"
+        HTML_FOOTER = '</pre><hr><a href="https://github.com/clach04/webook_server/">&#x1F4A9;&#x1f4d6; webook_server - light weight OPDS and web server that converts ebook formats on the fly</a></body></html>'
         path_title = environ['PATH_INFO']
         html = HTML_HEADER.format(path_title=path_title)
         files = os.listdir(os_path)
