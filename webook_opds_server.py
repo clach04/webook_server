@@ -566,6 +566,13 @@ def browser_search(environ, start_response):
 
     yield to_bytes('''
         </pre>
+
+        <hr>
+
+        <a href="https://github.com/clach04/webook_server/">
+        &#x1F4A9;&#x1f4d6; webook_server - light weight OPDS and web server that converts ebook formats on the fly
+        </a>
+
     </body>
 </html>
 ''')
