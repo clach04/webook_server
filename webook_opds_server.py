@@ -840,8 +840,8 @@ def opds_browse(environ, start_response):
             spaces1 = ' '*(50-len(filename))
             spaces2 = ' '*(20-len(size))
             # FIXME cgi escape needed!
-            if os.path.isdir(file_path): html += '<a href="' + escape(filename) + '/">' + escape(filename) + '/</a>'+spaces1+date+spaces2+'   -\n'
-            else: html += '<a href="' + escape(filename) + '">' + escape(filename) + '</a>'+spaces1+' '+date+spaces2+size+'\n'
+            if os.path.isdir(file_path): html += '<a href="' + quote(filename) + '/">' + escape(filename) + '/</a>'+spaces1+date+spaces2+'   -\n'
+            else: html += '<a href="' + quote(filename) + '">' + escape(filename) + '</a>'+spaces1+' '+date+spaces2+size+'\n'
         html += HTML_FOOTER
         headers = [('Content-Type', 'text/html'), ('Content-Length', str(len(html)))]
         headers.append(('Last-Modified', current_timestamp_for_header()))  # many clients will cache - koreader will show old directory info
