@@ -406,10 +406,10 @@ def search_recent(environ, start_response):
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>webook results {search_term}</title>
+        <title>&#x1F4A9;&#x1f4d6; WeBook Search Results {search_term}</title>
     </head>
     <body>
-        <h1>webook results {search_term}</h1>
+        <h1>&#x1F4A9;&#x1f4d6; WeBook Search Results {search_term}</h1>
 
         <pre>
 <a href="../">../</a>
@@ -533,10 +533,10 @@ def browser_search(environ, start_response):
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>webook results {search_term}</title>
+        <title>&#x1F4A9;&#x1f4d6; WeBook Search Results {search_term}</title>
     </head>
     <body>
-        <h1>webook results {search_term}</h1>
+        <h1>&#x1F4A9;&#x1f4d6; WeBook Search Results {search_term}</h1>
 
         <pre>
 <a href="search">search</a>
