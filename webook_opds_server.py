@@ -543,7 +543,7 @@ def browser_search(environ, start_response):
 '''.format(search_term=escape(search_term))
     )
 
-    search_hit_template = '''<a href="/file/{url}">{url}</a><br>'''
+    search_hit_template = '''<a href="/file/{filename_url}">{filename}</a><br>'''
 
     log.debug('pre for')
     #results = []  # TODO yield results?
@@ -553,16 +553,16 @@ def browser_search(environ, start_response):
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 #results.append(tmp_path_sans_prefix + '/')  # when appended add trailing slash for directories, avoid Flask oddness
-                url = tmp_path_sans_prefix + '/'  # make clear a dir with trailing slash
-                yield to_bytes(search_hit_template.format(url=escape(url)))
+                filename = tmp_path_sans_prefix + '/'  # make clear a dir with trailing slash
+                yield to_bytes(search_hit_template.format(filename_url=quote(filename), filename=escape(filename)))
         for file_name in files:
             tmp_path = join(root, file_name)
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 #results.append(tmp_path_sans_prefix)
                 # TODO include file size?
-                url = tmp_path_sans_prefix
-                yield to_bytes(search_hit_template.format(url=escape(url)))
+                filename = tmp_path_sans_prefix
+                yield to_bytes(search_hit_template.format(filename_url=quote(filename), filename=escape(filename)))
 
     yield to_bytes('''
         </pre>
