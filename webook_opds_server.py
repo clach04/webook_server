@@ -570,6 +570,7 @@ def browser_search(environ, start_response):
         </pre>
 
         <a href="search">search</a><br>
+        <a href="../">../</a>
 
         <hr>
 
