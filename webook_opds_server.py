@@ -539,7 +539,9 @@ def browser_search(environ, start_response):
         <h1>webook results {search_term}</h1>
 
         <pre>
+<a href="search">search</a>
 <a href="../">../</a>
+<br>
 '''.format(search_term=escape(search_term))
     )
 
@@ -566,6 +568,8 @@ def browser_search(environ, start_response):
 
     yield to_bytes('''
         </pre>
+
+        <a href="search">search</a><br>
 
         <hr>
 
