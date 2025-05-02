@@ -177,7 +177,7 @@ NOTE if changing service files, e.g. adding `Environment`, restart config (not j
   * ebook_dir - directory to serve, if omitted defaults to current directory (`./`)
   * temp_dir - temporary location on disk to store generated files. Will use OS environment variable TEMP if
  omitted, if that's missing system temp location. NOTE recommend using a temporary file system, on devices like RaspberryPi and SBCs with SD Cards, recommend using directory that is NOT located on SD Card to preserve card
- * self_url_path - for OPDS server, this is the http address of the server and is required for search to work correctly. Example `http://123.45.67.89:8080`
+ * self_url_path - for OPDS server, this is the public http / https address of the server and is required for search to work correctly (when behind a reverse proxy). Example `http://123.45.67.89:8080`
 
 ### Operating System Environment Variables
 
