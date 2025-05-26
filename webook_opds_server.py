@@ -1096,6 +1096,7 @@ def main(argv=None):
 
     usage = "usage: %prog [options] config_filename"
     parser = OptionParser(usage=usage, version="%%prog %s" % '0.0.1')
+    parser.add_option("-g", "--guess_self_url_path", "--guess-self-url-path", action="store_true")
     parser.add_option("-v", "--verbose", action="store_true")
 
     (options, args) = parser.parse_args(argv[1:])
@@ -1125,11 +1126,10 @@ def main(argv=None):
     listen_address = config['config']['host']
     local_ip = determine_local_ipaddr()
 
-    guess_self_url_path = False
-    if guess_self_url_path:
+    if options.guess_self_url_path:
         config['self_url_path'] = 'http://%s:%d', local_ip, listen_port
     if not config.get('self_url_path'):
-        raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
+        raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH, --guess-self-url-path flag) missing')
 
     log.info('Python %s on %s', sys.version, sys.platform)
     log.info('ebook_conversion %s', ebook_conversion.convert_version())
