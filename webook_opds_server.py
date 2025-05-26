@@ -9,6 +9,7 @@ Python 2 or Python 3
 """
 
 import logging
+from optparse import OptionParser
 import os
 import mimetypes
 import socket
@@ -1093,8 +1094,26 @@ def main(argv=None):
     argv = argv or sys.argv
     print('Python %s on %s' % (sys.version, sys.platform))
 
+    usage = "usage: %prog [options] config_filename"
+    parser = OptionParser(usage=usage, version="%%prog %s" % '0.0.1')
+    parser.add_option("-v", "--verbose", action="store_true")
+
+    (options, args) = parser.parse_args(argv[1:])
+    #print('%r' % ((options, args),))
+    verbose = options.verbose
+    if verbose:
+        print('Python %s on %s' % (sys.version.replace('\n', ' - '), sys.platform))
+
+    def usage():
+        parser.print_usage()
+
+    """
+    if not args:
+        parser.print_usage()
+        return 1
+    """
     try:
-        config_filename = argv[1]
+        config_filename = args[0]
     except IndexError:
         config_filename = 'config.json'
     log.info('Using config file %r', config_filename)
