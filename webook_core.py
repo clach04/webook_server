@@ -83,6 +83,13 @@ class BootMeta:
         return ''  # or None?
 
     @property
+    def base_filename(self):
+        """Filename only, no path. Returns string.
+        """
+        filename = os.path.basename(self.filename)
+        return filename
+
+    @property
     def mimetype(self):
         """Guess mimetype based on filename (rather than content). Returns string.
         """
@@ -104,6 +111,14 @@ class BootMeta:
         """
         filename = os.path.basename(self.filename)
         result = os.path.splitext(filename)[1]
+        return result
+
+    @property
+    def file_octet_size(self):
+        """Lookup size in bytes on disk. Returns integer.
+        NOTE does (uncached) lookup each time, individually (no batch)
+        """
+        result = os.path.getsize(self.filename)
         return result
 
 

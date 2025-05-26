@@ -322,7 +322,6 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
 
     # Needs to be a file (maybe an slink) - not a directory
     metadata = BootMeta(file_path)
-    # TODO include file size?
     # TODO try and guess title and author name
     # TODO is there a way to get "book information" link to work?
     result = to_bytes('''
@@ -332,6 +331,12 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
             <name>{author_name_surname_first}</name>
         </author>
         <id>{title}</id>
+        <content type="xhtml">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                <p>Original filename: {base_filename}</p>
+                <p>file size: {file_size} bytes (TODO human-readable)</p>
+            </div>
+        </content>
         <link type="application/octet-stream" rel="http://opds-spec.org/acquisition" title="Raw ({file_extension})" href="/file/{href_path}"/><!-- koreader will hide and not display this due to (some) unsupported mime-type - hence "Original" with different type -->
         <link type="{mime_type}" rel="http://opds-spec.org/acquisition" title="Original ({file_extension})" href="/file/{href_path}"/>
         <link type="application/epub+zip" rel="http://opds-spec.org/acquisition" title="EPUB convert" href="/epub/{href_path}"/>
@@ -344,6 +349,8 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
         mime_type=metadata.mimetype,  #"application/epub+zip",  #'application/octet-stream'  # FIXME choosing something koreader does not support results in option being invisible
         # unclear on text koreader charset encoding. content-type for utf-8 = "text/plain; charset=utf-8"
         title=xml_escape(metadata.title),  # quote(metadata.title),   # ends up with escaping showing  in koreader # koreader fails to parse when filename contains single quotes if using: escape(file_name, quote=True), - HOWEVER koreader will fail if <> are left unescaped.
+        base_filename=xml_escape(metadata.base_filename),
+        file_size=metadata.file_octet_size,
         file_extension=metadata.file_extension  # no need to escape?
         ))
     return result
