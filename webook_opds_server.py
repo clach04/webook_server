@@ -1101,6 +1101,14 @@ def main(argv=None):
 
     global config
     config = load_config(config_filename)
+
+    listen_port = config['config']['port']
+    listen_address = config['config']['host']
+    local_ip = determine_local_ipaddr()
+
+    guess_self_url_path = False
+    if guess_self_url_path:
+        config['self_url_path'] = 'http://%s:%d', local_ip, listen_port
     if not config.get('self_url_path'):
         raise KeyError('self_url_path (or OS variable WEBOOK_SELF_URL_PATH) missing')
 
@@ -1108,9 +1116,6 @@ def main(argv=None):
     log.info('ebook_conversion %s', ebook_conversion.convert_version())
 
 
-    listen_port = config['config']['port']
-    listen_address = config['config']['host']
-    local_ip = determine_local_ipaddr()
     log.info('Listen on: %r', (listen_address, listen_port))
     log.info('OPDS metadata publish URL: %r', (config['self_url_path']))
     log.info('Starting server: http://%s:%d', local_ip, listen_port)
