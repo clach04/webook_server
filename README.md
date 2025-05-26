@@ -106,7 +106,8 @@ If installing/working with a source checkout issue:
 
     cp example_config.json config.json
     # Optional; edit config.json with "ebook_dir" (defaults to ./ if omitted) and "temp_dir" (will use OS environment variable TEMP if omitted, if that's missing system temp location) location
-    python webook_server.py
+    python webook_opds_server.py
+    py -3 webook_opds_server.py example_config.json
 
 Then open a browser to http://localhost:8080/... or issue:
 
@@ -126,7 +127,7 @@ if setting tmp dir, mkdir -p /tmp/ebookserver/....
 
 4. Run the server with the config file:
 
-        python webook_server.py sample_reading_media.json
+        python webook_opds_server.py sample_reading_media.json
 
 5. Open Web browser to http://127.0.0.1:8080/ and browse around, for example download
 
