@@ -111,6 +111,9 @@ If installing/working with a source checkout issue:
 
 Then open a browser to http://localhost:8080/... or issue:
 
+    curl http://localhost:8080/
+    curl http://localhost:8080/recent?n=10
+    curl http://localhost:8080/file
     curl http://localhost:8080/....
 
 ### Sample Run
