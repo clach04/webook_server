@@ -615,7 +615,7 @@ def opds_search(environ, start_response):
     result = [to_bytes(
 '''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
-      <title>Catalog in /</title>
+      <title>webook server - Search Results</title>
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
       <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
@@ -871,7 +871,7 @@ def opds_browse(environ, start_response):
     # else client_type == CLIENT_OPDS
     result.append(to_bytes('''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
-      <title>Catalog in /</title>
+      <title>webook server - Catalog in /</title>  <!-- FIXME only true for root directory -->
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
       <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
@@ -987,7 +987,7 @@ def opds_root(environ, start_response):
         result.append(to_bytes(
 '''<?xml version="1.0" encoding="UTF-8"?>
   <feed xmlns="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/terms/" xmlns:opds="http://opds-spec.org/2010/catalog">
-      <title>Catalog in /</title>
+      <title>webook server</title>
       <id>/</id>
       <link rel="start" href="/" type="application/atom+xml;profile=opds-catalog;kind=navigation"></link>
       <updated></updated><!-- TODO FIXME implement UTC ISO timestamp string for now -->
