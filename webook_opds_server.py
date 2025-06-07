@@ -659,11 +659,11 @@ def opds_search(environ, start_response):
 
         for file_name in files:
             # any file names that hit
-            tmp_path = join(root, file_name)
+            tmp_path = join(root, file_name)  # fully qualified, native path / filename
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 #print('opds_search() params %r' % ((file_name, tmp_path_sans_prefix, ),))
-                single_book_entry = opds_book_entry(os.path.join(directory_path, file_name), web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
+                single_book_entry = opds_book_entry(tmp_path, web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
                 result.append(single_book_entry)
 
                 #print('DEBUG file_name: %r' % file_name)
