@@ -239,6 +239,23 @@ For testing. By default cURL will be detected by webook_opds_server.py
 as an OPDS client (rather than as a web browser), this can be influenced
 via the http accept header.
 
-  curl -v --header "ACCEPT: */*"  # NOTE this happens to be the default so this is not actually needed
-  curl -v --header "ACCEPT: text/html"  # convince OPDS server this client is a web browser
+    curl -v --header "ACCEPT: */*"  # act as an OPDS client - NOTE this happens to be the default so this is not actually needed
+    curl -v --header "ACCEPT: text/html"  # convince OPDS server this client is a web browser
 
+    WEBOOK_SERVER_URL=http://localhost:9987
+    WEBOOK_SERVER_URL=http://localhost:8080
+    export WEBOOK_SERVER_URL
+
+
+    curl ${WEBOOK_SERVER_URL}
+    curl -v --header "ACCEPT: text/html" ${WEBOOK_SERVER_URL}  # convince OPDS server this client is a web browser
+
+    curl ${WEBOOK_SERVER_URL}/search?q=foundation
+    curl -v --header "ACCEPT: text/html" ${WEBOOK_SERVER_URL}/search?q=foundation  # still a web browser html search due to URL
+
+    curl -v --header "ACCEPT: text/html" ${WEBOOK_SERVER_URL}/opds/search?q=foundation  # OPDS search and results
+    curl -v ${WEBOOK_SERVER_URL}/opds/search?q=foundation  # OPDS search and results
+
+
+    # OPDS file browse
+    curl -v  ${WEBOOK_SERVER_URL}/file/
