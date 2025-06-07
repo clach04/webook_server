@@ -313,6 +313,7 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
         web_directory_path - web path of file (i.e. the parent URL of the file) which if not empty needs to include trailing slash?
         filename - optional filename, derived from full_file_path_and_name_to_book if omitted
     """
+    #log.debug('full_file_path_and_name_to_book %r', full_file_path_and_name_to_book)  # A little too verbose for debug
     #print('opds_book_entry params %r' % ((full_file_path_and_name_to_book, web_directory_path, filename),))
     file_path = full_file_path_and_name_to_book
     filename = filename or os.path.basename(full_file_path_and_name_to_book)
@@ -321,7 +322,7 @@ def opds_book_entry(full_file_path_and_name_to_book, web_directory_path=None, we
     web_full_file_path_and_name_to_book = web_full_file_path_and_name_to_book or (directory_path + filename)
 
     # Needs to be a file (maybe an slink) - not a directory
-    metadata = BootMeta(file_path)
+    metadata = BootMeta(full_file_path_and_name_to_book)
     # TODO try and guess title and author name
     # TODO is there a way to get "book information" link to work?
     result = to_bytes('''
@@ -662,7 +663,7 @@ def opds_search(environ, start_response):
             tmp_path_sans_prefix = tmp_path[directory_path_len:]
             if search_term in tmp_path_sans_prefix.lower():
                 #print('opds_search() params %r' % ((file_name, tmp_path_sans_prefix, ),))
-                single_book_entry = opds_book_entry(file_name, web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
+                single_book_entry = opds_book_entry(os.path.join(directory_path, file_name), web_full_file_path_and_name_to_book=tmp_path_sans_prefix, filename=file_name)
                 result.append(single_book_entry)
 
                 #print('DEBUG file_name: %r' % file_name)
